@@ -99,7 +99,7 @@ tr:last-child td { border-bottom: 0; }
 }
 
 @media print {
-  .nav, .site-footer, .theme-toggle, .skip { display: none !important; }
+  .nav, .site-footer, .skip { display: none !important; }
   body { background: #fff; color: #000; font-size: 11pt; }
   a { color: #000; }
 }

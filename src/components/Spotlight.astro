@@ -3,8 +3,7 @@
  * A faint accent-colored light that follows the cursor across the dark page.
  *
  * It blends with `screen`, so it lifts the near-black ground without touching the
- * legibility of text above it (screen leaves white unchanged). It is dark-mode only —
- * on the light ground the same light reads as a smudge — and it never appears for
+ * legibility of text above it (screen leaves white unchanged). It never appears for
  * touch pointers, reduced-motion visitors, or print.
  */
 ---
@@ -34,11 +33,6 @@
     transition:
       transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
       opacity 260ms ease;
-  }
-
-  /* Light mode keeps its own ground; the toggle hides the light with the theme. */
-  :global(:root[data-theme='light']) .spotlight {
-    display: none;
   }
 
   /* No cursor to follow, or motion the visitor has asked us not to make. */

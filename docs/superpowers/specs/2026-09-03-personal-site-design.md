@@ -54,12 +54,11 @@ with precision, small details, no decoration for its own sake.
 | `--accent` | `#8b7cff` | links, cursor, headline numbers |
 | `--ok` / `--bad` | muted green / muted red | result-table tints only |
 
-**Dark is the default**, not merely the design target: it is the base `:root` palette,
-so it is what a visitor gets before any script runs. **Light mode** is a full token swap
-on an off-white ground (`#f6f7f9`) under `[data-theme="light"]`, reached by the nav
-toggle and remembered in `localStorage`. The system `prefers-color-scheme` does not
-override the default — only the visitor's own choice does. Dark is the design
-target; light must be correct and legible, not a second design.
+**The site ships one palette: dark.** There is no light theme and no theme switch —
+the values above sit on bare `:root`, so they are what every visitor gets, script or no
+script, whatever their system preference. `color-scheme: dark` extends the ground to the
+browser's own surfaces (scrollbars, form controls, the caret). Printing is the single
+exception: `@media print` forces black on white, since paper is not a theme.
 
 **Type.** Inter (variable) for body and headings; JetBrains Mono (variable) for section
 labels, dates, tags, table numbers, nav, and meta lines. Both self-hosted via
@@ -86,7 +85,7 @@ cursor at the end of the hero meta line. All ≤ 200 ms; everything disabled und
 
 ### Nav (all pages)
 Sticky, slim. Left: `samuel chen` (mono). Right: `projects · experience · résumé ·
-github` + theme toggle. Links stay inline on mobile; no hamburger.
+github`. Links stay inline on mobile; no hamburger.
 
 ### Homepage `/`
 1. **Hero.** `Samuel Chen` (large). Below it a mono meta line

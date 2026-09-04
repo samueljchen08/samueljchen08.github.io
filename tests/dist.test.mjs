@@ -7,16 +7,16 @@ import { fileURLToPath } from 'node:url';
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 const html = (p) => readFileSync(join(dist, p), 'utf8');
 
-test('homepage builds with nav, theme script, and meta', () => {
+test('homepage builds with nav and meta, and ships one palette', () => {
   const page = html('index.html');
   assert.match(page, /<title>Samuel Chen<\/title>/);
   assert.match(page, /<meta property="og:title"/);
   assert.match(page, /<link rel="canonical" href="https:\/\/samueljchen08\.github\.io\/"/);
-  assert.match(page, /localStorage\.getItem\('theme'\)/);
   for (const href of ['/#work', '/#experience', '/resume/', 'https://github.com/samueljchen08']) {
     assert.ok(page.includes(`href="${href}"`), `nav links to ${href}`);
   }
-  assert.match(page, /aria-label="Toggle theme"/);
+  assert.doesNotMatch(page, /aria-label="Toggle theme"/, 'the site ships one palette — no theme switch');
+  assert.doesNotMatch(page, /data-theme/, 'no theme attribute is written at runtime');
 });
 
 test('fonts are self-hosted, nothing from Google', () => {

@@ -42,15 +42,6 @@ const ogImage = new URL('/og.png', Astro.site!);
     <meta property="og:image:alt" content="Samuel Chen — MIT CS-AI '27, with three measured results from his projects" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage} />
-    <script is:inline>
-      (function () {
-        var stored = null;
-        try { stored = localStorage.getItem('theme'); } catch (e) {}
-        // Dark is the site's default; the system preference does not override it.
-        // Only a visitor's own choice, stored from the toggle, switches to light.
-        document.documentElement.dataset.theme = stored === 'light' ? 'light' : 'dark';
-      })();
-    </script>
   </head>
   <body>
     <Spotlight />
