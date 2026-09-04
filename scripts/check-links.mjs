@@ -1,7 +1,11 @@
-// Walks dist/, checks every href. Internal links must resolve to a file in dist/;
-// external links must answer with a status < 400. Run after `npm run build`.
+// Walks dist/, checks every href. Same-origin links resolve against dist first
+// (fetched only when no matching file exists there); other internal links must
+// resolve to a file in dist/; remaining external links must answer with a
+// status < 400. Run after `npm run build`.
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+
+const SITE = 'https://samueljchen08.github.io';
 
 const dist = resolve('dist');
 if (!existsSync(dist)) { console.error('dist/ missing — run npm run build first'); process.exit(1); }
@@ -21,9 +25,17 @@ for (const file of htmlFiles(dist)) {
   for (const m of src.matchAll(/href="([^"]+)"/g)) {
     const href = m[1];
     if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#')) continue;
-    const bucket = /^https?:\/\//.test(href) ? external : internal;
-    if (!bucket.has(href)) bucket.set(href, []);
-    bucket.get(href).push(file.slice(dist.length));
+    let bucket = /^https?:\/\//.test(href) ? external : internal;
+    let key = href;
+    if (href.startsWith(SITE + '/')) {
+      const path = href.slice(SITE.length).split('#')[0].split('?')[0];
+      if (existsSync(join(dist, path)) || existsSync(join(dist, path, 'index.html'))) {
+        bucket = internal;
+        key = path;
+      }
+    }
+    if (!bucket.has(key)) bucket.set(key, []);
+    bucket.get(key).push(file.slice(dist.length));
   }
 }
 
