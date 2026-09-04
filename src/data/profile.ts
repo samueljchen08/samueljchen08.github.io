@@ -104,7 +104,7 @@ export const roles: Role[] = [
     track: 'finance',
     bullets: [
       'Engineered 7 financial tools in Python to automate trading research and backtesting, including portfolio tracking against benchmarks, industry margins/growth, momentum/moving averages, volatility in levered indices, and rolling correlations',
-      'Screened over 3,000 companies to find top-quartile performers in FCF margin, EPS growth, ROIC, YTD performance, and more to complement fundamental approach for portfolio manager\'s investment decisions for $10+ billion-dollar fund',
+      'Screened over 3,000 companies to find top-quartile performers in FCF margin, EPS growth, ROIC, YTD performance, and more to complement fundamental approach for portfolio manager’s investment decisions for $10+ billion-dollar fund',
     ],
   },
   {
@@ -120,7 +120,6 @@ export const roles: Role[] = [
     ],
   },
 ];
-
 export const activities: Activity[] = [
   {
     name: 'MIT Varsity Basketball',
