@@ -17,7 +17,7 @@ export interface SkillGroup {
  */
 const SECTORS: Record<string, string[]> = {
   Languages: ['Python', 'JavaScript', 'HTML', 'CSS'],
-  'Machine learning': [
+  'Machine Learning': [
     'PyTorch',
     'XGBoost',
     'YOLO11',
@@ -27,8 +27,8 @@ const SECTORS: Record<string, string[]> = {
     'LoRA',
     'LLM APIs',
   ],
-  'Statistics & experiment design': ['Bayesian inference', 'Causal inference', 'Statistical power'],
-  'Data & tooling': ['NumPy', 'Pydantic', 'pytest', 'SQLite', 'Synthetic data'],
+  'Statistics & Experiment Design': ['Bayesian inference', 'Causal inference', 'Statistical power'],
+  'Data & Tooling': ['NumPy', 'Pydantic', 'pytest', 'SQLite', 'Synthetic data'],
 };
 
 /**

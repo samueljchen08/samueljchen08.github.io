@@ -33,18 +33,11 @@ export interface Activity {
 export const person = {
   name: 'Samuel Chen',
   email: 'samchen@mit.edu',
-  phone: '(206) 475-8031',
   locations: ['Cambridge, MA', 'Bellevue, WA'],
   github: 'https://github.com/samueljchen08',
   linkedin: 'https://www.linkedin.com/in/samuelj-chen',
   resumePdf: '/samuel-chen-resume.pdf',
 } as const;
-
-/**
- * E.164 for `tel:` links. The site is shared cold and read abroad, so the US country
- * code stays on the dialable form even though the printed number omits it.
- */
-export const phoneHref = `tel:+1${person.phone.replace(/\D/g, '')}`;
 
 export const education = {
   school: 'Massachusetts Institute of Technology',

@@ -34,6 +34,16 @@ test('social preview card ships and is referenced absolutely', () => {
   assert.match(page, /name="twitter:card" content="summary_large_image"/);
 });
 
+test('every image the pages reference is actually in the build', () => {
+  // A logo referenced but not shipped renders as a broken icon; nothing else catches it.
+  for (const file of ['index.html', 'resume/index.html']) {
+    const page = html(file);
+    for (const src of new Set([...page.matchAll(/(?:src|href)="(\/[^"]+\.(?:jpg|jpeg|png|svg|webp|pdf))"/g)].map((m) => m[1]))) {
+      assert.ok(existsSync(join(dist, src)), `${src} referenced by ${file} is missing from dist/`);
+    }
+  }
+});
+
 test('robots and favicon ship', () => {
   assert.ok(existsSync(join(dist, 'robots.txt')));
   assert.ok(existsSync(join(dist, 'favicon.svg')));

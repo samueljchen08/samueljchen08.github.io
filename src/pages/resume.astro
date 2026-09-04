@@ -12,7 +12,7 @@ const technical = await technicalSkills();
       <div>
         <h1>{person.name}</h1>
         <p class="mono muted contact">
-          {person.locations.join(' / ')}{' · '}<a href={`mailto:${person.email}`}>{person.email}</a>{' · '}{person.phone}{' · '}
+          {person.locations.join(' / ')}{' · '}<a href={`mailto:${person.email}`}>{person.email}</a>{' · '}
           <a href={person.linkedin} target="_blank" rel="noopener noreferrer">linkedin</a>{' · '}
           <a href={person.github} target="_blank" rel="noopener noreferrer">github</a>
         </p>

@@ -59,7 +59,7 @@ function recordFragment(sourceFile, frag, targetFile) {
 
 for (const file of files) {
   const src = htmlByFile.get(file);
-  for (const m of src.matchAll(/href="([^"]+)"/g)) {
+  for (const m of src.matchAll(/(?:href|src)="([^"]+)"/g)) {
     const href = m[1];
     if (href.startsWith('mailto:') || href.startsWith('tel:')) continue;
 
