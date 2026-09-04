@@ -1,6 +1,16 @@
 ---
 import type { Role } from '../data/profile';
 
+/**
+ * A role as a compact card: square company tile, name and title, dates, two bullets.
+ *
+ * The tile shows the company's logo when `role.logo` names a file in `public/logos/`,
+ * and a typographic monogram otherwise — sharp at any density, and consistent across
+ * companies whose real marks are only available as 16px favicons.
+ *
+ * When the company has a site (`role.href`) the whole card becomes a stretched link to
+ * it and lights the same accent frame as a project card.
+ */
 interface Props {
   role: Role;
 }
@@ -8,17 +18,33 @@ interface Props {
 const { role } = Astro.props;
 ---
 
-<article class="card">
-  <p class="dates">{role.start} – {role.end}</p>
-  <h3>{role.company}</h3>
-  <p class="title">{role.title} · {role.location}</p>
+<article class:list={['card', role.href && 'card--link']}>
+  <header>
+    <span class="tile" aria-hidden="true">
+      {role.logo ? <img src={role.logo} alt="" width="40" height="40" /> : <span class="mark">{role.mark}</span>}
+    </span>
+    <div class="who">
+      <h3>
+        {role.href ? (
+          <a class="stretched" href={role.href} target="_blank" rel="noopener noreferrer">{role.company}</a>
+        ) : (
+          role.company
+        )}
+      </h3>
+      <p class="title">{role.title}</p>
+    </div>
+  </header>
+
+  <p class="dates">{role.start} – {role.end} · {role.location}</p>
+
   <ul class="bullets">
-    {role.bullets.slice(0, 2).map((bullet) => <li>{bullet}</li>)}
+    {role.bullets.map((bullet) => <li>{bullet}</li>)}
   </ul>
 </article>
 
 <style>
   .card {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -26,28 +52,85 @@ const { role } = Astro.props;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg-raised);
+    transition:
+      border-color var(--dur) ease,
+      box-shadow var(--dur) ease;
+  }
+
+  /* Only a card that goes somewhere lights up, so the glow always means "clickable". */
+  .card--link:hover,
+  .card--link:focus-within {
+    border-color: var(--accent);
+    box-shadow:
+      0 0 0 1px var(--accent),
+      0 14px 48px -16px color-mix(in srgb, var(--accent) 60%, transparent),
+      0 0 28px -6px color-mix(in srgb, var(--accent) 32%, transparent);
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  .tile {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .tile img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+  .mark {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+  }
+
+  .who { min-width: 0; }
+  h3 {
+    font-size: 1.1rem;
+    line-height: 1.25;
+  }
+  h3 a { color: var(--fg); }
+  h3 a:hover { color: var(--accent); text-decoration: none; }
+  .title {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--fg-muted);
+    margin: 3px 0 0;
+    max-width: none;
   }
 
   .dates {
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--accent);
-    margin: 0 0 var(--space-1);
-  }
-  h3 {
-    font-size: 1.2rem;
-  }
-  .title {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: var(--fg-muted);
-    margin: 4px 0 var(--space-2);
+    margin: 0 0 var(--space-2);
     max-width: none;
   }
+
   .bullets {
     margin: 0;
-    font-size: 0.95rem;
+    padding-left: 1.1em;
+    font-size: 0.92rem;
+    line-height: 1.55;
     max-width: none;
+  }
+  .bullets li + li { margin-top: 6px; }
+
+  .stretched::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
   }
 
   @media (max-width: 767px) {

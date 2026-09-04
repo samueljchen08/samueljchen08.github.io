@@ -34,8 +34,13 @@ Routes:
 | `/resume/` | HTML résumé rendered from `profile.ts`, with PDF download |
 | `/404` | Mono one-liner + link home |
 
-Out of scope (explicitly declined): a writing / blog / notes section; any backend, forms,
-or analytics; testimonials or anything not corroborable by the repos, notebook, or PDF.
+The homepage also carries a **contact** section (`id="contact"`, reached from the hero's
+third action and the nav): every channel written out, plus a short message form. The site
+is static, so the form composes a pre-filled email for the visitor's mail client; setting
+`FORM_ENDPOINT` in `Contact.astro` switches it to a real POST endpoint.
+
+Out of scope (explicitly declined): a writing / blog / notes section; any backend or
+analytics; testimonials or anything not corroborable by the repos, notebook, or PDF.
 
 ## 3. Visual system
 
@@ -101,9 +106,13 @@ github`. Links stay inline on mobile; no hamburger.
    stretched link to the repository; hovering or focusing it lights an accent frame
    and bloom around the card.
 3. **Experience** (`// experience`). The five roles as cards in the same circular
-   carousel: accent date range, company, title · location, first two bullets. Order:
-   Nexus AI (Co-Founder) → Goldman Sachs FIG → Barings → Cercano → MIT Sloan research.
-   The cards are not links, so they do not take the projects' hover light.
+   carousel. Each card: a 44px square company tile (a logo from `public/logos/` when
+   `role.logo` names one, otherwise a typographic monogram from `role.mark`), company,
+   title, then `start – end · location` in accent mono, then **exactly two bullets of
+   one sentence each**. Order: Nexus AI (Co-Founder) → Goldman Sachs FIG → Barings →
+   Cercano → MIT Sloan research. A card takes the projects' hover light **only** when
+   `role.href` is set, so the glow always means the card goes somewhere; Nexus AI links
+   to nexusbasketball.org.
 4. **Education & skills.** MIT, BS CS-AI, minor in Finance, GPA 4.95/5.0, exp. May 2027;
    coursework as wrapped tags; technical skills as tags.
 5. **Off the keyboard.** A list of activities with roles (not a paragraph): MIT Varsity

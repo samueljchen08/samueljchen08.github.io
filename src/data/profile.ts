@@ -12,8 +12,14 @@ export interface Role {
   end: string;
   /** Engineering roles lead on the homepage; finance roles support. */
   track: 'engineering' | 'finance';
-  /** Ordered so the first two are the most engineering-relevant — the homepage shows only those. */
+  /** Two, one sentence each. The résumé page and the homepage card both show both. */
   bullets: string[];
+  /** Two or three letters for the card's square tile when there is no logo file. */
+  mark: string;
+  /** A square logo in `public/logos/`. Falls back to `mark` when absent. */
+  logo?: string;
+  /** Where the company card links, when the company has a site worth visiting. */
+  href?: string;
 }
 
 export interface Activity {
@@ -76,11 +82,11 @@ export const roles: Role[] = [
     start: 'Apr 2025',
     end: 'Present',
     track: 'engineering',
+    mark: 'NX',
+    href: 'https://www.nexusbasketball.org/',
     bullets: [
-      'Built end-to-end machine learning pipelines on multi-season NCAA basketball datasets to forecast player performance, transfer fit, and outcomes, including data ingestion, feature engineering, model training, backtesting, and error analysis',
-      'Built a retrieval-augmented LLM scouting platform that grounds natural-language analysis in structured player and team data, enabling coaches to query players, evaluate roster needs, and generate automated scouting insights',
-      'Trained and evaluated predictive models for player performance and transfer fit using temporally separated train/test sets; performed feature engineering, hyperparameter tuning, and error analysis to study out-of-sample generalization',
-      'Established partnerships with 20+ Division 1 basketball programs, including national runner-up Houston University',
+      'Built ML pipelines and a retrieval-augmented scouting platform over multi-season NCAA data to forecast player performance and transfer fit.',
+      'Established partnerships with 20+ Division I programs, including national runner-up Houston.',
     ],
   },
   {
@@ -90,20 +96,23 @@ export const roles: Role[] = [
     start: 'Jun 2026',
     end: 'Aug 2026',
     track: 'finance',
+    mark: 'GS',
     bullets: [
-      'Supported 8 M&A and coverage teams across Financial Institutions, performing company and industry research, valuation and transaction analysis, and preparation of materials for senior bankers and client discussions',
-      'Contributed to the buy-side advisory for KKR, Dragoneer, and Amwins on the ~$5.5B acquisition of Steadfast Group, analyzing transaction dynamics, valuation, strategic rationale, and insurance brokerage industry considerations',
+      'Supported 8 M&A and coverage teams across Financial Institutions with valuation and transaction analysis.',
+      'Contributed to the buy-side advisory on the ~$5.5B acquisition of Steadfast Group.',
     ],
   },
   {
     company: 'Barings',
-    title: 'Capital Solutions (Private Equity and Special Situations) Intern',
+    title: 'Capital Solutions Intern',
     location: 'Charlotte, NC',
     start: 'Jun 2025',
     end: 'Aug 2025',
     track: 'finance',
+    mark: 'B',
     bullets: [
-      'Screened and led investment memo drafting for 4 potential debt and equity investments using cash flow models and returns analysis in combination with market research, investor presentations and management calls',
+      'Led memo drafting for 4 debt and equity investments, building the cash-flow and returns analysis behind each.',
+      'Pitched an exit strategy for a ~$50M oil and gas investment using a dynamic DCF and sum-of-the-parts model.',
     ],
   },
   {
@@ -113,9 +122,10 @@ export const roles: Role[] = [
     start: 'Jun 2024',
     end: 'Aug 2024',
     track: 'finance',
+    mark: 'CM',
     bullets: [
-      'Engineered 7 financial tools in Python to automate trading research and backtesting, including portfolio tracking against benchmarks, industry margins/growth, momentum/moving averages, volatility in levered indices, and rolling correlations',
-      'Screened over 3,000 companies to find top-quartile performers in FCF margin, EPS growth, ROIC, YTD performance, and more to complement fundamental approach for portfolio manager’s investment decisions for $10+ billion-dollar fund',
+      'Engineered 7 Python tools automating trading research and backtesting, from benchmark tracking to rolling correlations.',
+      'Screened 3,000+ companies on FCF margin, EPS growth and ROIC for a $10B+ fund.',
     ],
   },
   {
@@ -125,9 +135,10 @@ export const roles: Role[] = [
     start: 'May 2024',
     end: 'Sep 2024',
     track: 'engineering',
+    mark: 'MIT',
     bullets: [
-      'Built probabilistic Monte Carlo season simulators in Python that model team skill distributions, derive matchup win probabilities, and fit simulation parameters to historical NBA, NFL, NHL, MLB, and European soccer outcomes',
-      'Conducted cross-sport empirical analysis across 15+ leagues and competitions, engineering quantitative measures of competitive balance and durable dominance and using regression analysis to study relationships between parity, performance dispersion, and sustained team success',
+      'Coded 5 Monte Carlo season simulators in Python measuring dominance and competitive balance across major team sports.',
+      'Analyzed 15+ sports to test how durable dominance relates to competitiveness.',
     ],
   },
 ];
@@ -148,7 +159,7 @@ export const activities: Activity[] = [
   // USER-SUPPLIED title (2026-09-03); the résumé PDF lists the club without a title.
   { name: 'StartLabs', role: 'VP of External Relations' },
   { name: 'Splash' },
-  { name: 'Brass Rat Investments' },
+  { name: 'Brass Rat Investments', role: 'Tech Sector Analyst' },
 ];
 
 /**
