@@ -6,9 +6,11 @@ import Carousel from '../components/Carousel.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import ExperienceCard from '../components/ExperienceCard.astro';
 import Tags from '../components/Tags.astro';
-import { person, education, roles, activities, skills, interests } from '../data/profile';
+import { person, education, roles, activities, interests } from '../data/profile';
+import { technicalSkills } from '../data/skills';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const technical = await technicalSkills();
 
 const description =
   "Samuel Chen — MIT Computer Science (AI) '27. Projects in agentic RL environments, causal experiments on AI buyer agents, and sports tracking; experience at Nexus AI, Goldman Sachs, Barings, and Cercano.";
@@ -51,7 +53,7 @@ const locations = person.locations.join(' / ');
         <h4 class="sub-label">coursework</h4>
         <Tags items={education.coursework} />
         <h4 class="sub-label">technical</h4>
-        <Tags items={skills} />
+        <Tags items={technical} />
       </div>
     </Section>
 

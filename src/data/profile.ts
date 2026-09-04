@@ -54,6 +54,11 @@ export const education = {
     'Differential Equations',
     'Probability and Random Variables',
     'Fundamentals of Programming',
+    'Web Labs',
+    'Managerial Finance',
+    'Mergers, Acquisitions and Private Equity',
+    'Corporate Finance Lab',
+    'Corporate Accounting',
   ],
 } as const;
 
@@ -140,7 +145,12 @@ export const activities: Activity[] = [
   { name: 'Brass Rat Investments' },
 ];
 
-export const skills = ['Python', 'HTML', 'CSS', 'JavaScript', 'Data Analysis', 'Modeling'];
+/**
+ * The languages this résumé claims on their own. Everything else shown under
+ * "technical" is derived from the projects' own stacks — see data/skills.ts — so the
+ * list cannot claim a skill no project on the site actually demonstrates.
+ */
+export const skills = ['Python', 'HTML', 'CSS', 'JavaScript'];
 
 export const interests = [
   'Basketball',

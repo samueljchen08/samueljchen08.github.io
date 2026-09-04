@@ -1,6 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import { person, education, roles, activities, skills, interests } from '../data/profile';
+import { person, education, roles, activities, interests } from '../data/profile';
+import { technicalSkills } from '../data/skills';
+
+const technical = await technicalSkills();
 ---
 
 <Base title="Résumé — Samuel Chen" description="Samuel Chen's résumé: MIT Computer Science (AI) '27, Nexus AI co-founder, Goldman Sachs, Barings, Cercano Management, MIT Sloan research.">
@@ -59,7 +62,7 @@ import { person, education, roles, activities, skills, interests } from '../data
 
     <section>
       <h2 class="label">skills & interests</h2>
-      <p><strong>Technical:</strong> {skills.join(', ')}</p>
+      <p><strong>Technical:</strong> {technical.join(', ')}</p>
       <p><strong>Interests:</strong> {interests.join(', ')}</p>
     </section>
   </main>
