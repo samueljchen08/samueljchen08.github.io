@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<!--
+  Source for public/og.png (the social preview card), 1200x630, in the site's own tokens.
+  Regenerate after changing a headline figure:
+    node -e "const{chromium}=require('playwright');(async()=>{const b=await chromium.launch({channel:'chrome'});const p=await b.newPage({viewport:{width:1200,height:630}});await p.goto('file://'+process.cwd()+'/scripts/og-card.html',{waitUntil:'networkidle'});await p.evaluate(()=>document.fonts.ready);await p.waitForTimeout(500);await p.screenshot({path:'public/og.png'});await b.close()})()"
+  Needs the optional playwright devDependency + Google Chrome.
+-->
+<style>
+  @font-face {
+    font-family: 'Inter Variable';
+    src: url('../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
+    font-weight: 100 900;
+  }
+  @font-face {
+    font-family: 'JetBrains Mono Variable';
+    src: url('../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2') format('woff2-variations');
+    font-weight: 100 800;
+  }
+
+  :root {
+    --bg: #0b0d10;
+    --border: #1f242b;
+    --fg: #e6e8eb;
+    --fg-muted: #8b929c;
+    --accent: #8b7cff;
+    --grid-dot: rgba(230, 232, 235, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    background: var(--bg);
+    background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+    background-size: 24px 24px;
+    font-family: 'Inter Variable', system-ui, sans-serif;
+    color: var(--fg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 76px;
+    padding: 64px 80px;
+    overflow: hidden;
+  }
+
+  .top { display: flex; flex-direction: column; gap: 20px; }
+
+  h1 {
+    font-size: 104px;
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+
+  .meta {
+    font-family: 'JetBrains Mono Variable', monospace;
+    font-size: 20px;
+    color: var(--fg-muted);
+    letter-spacing: 0;
+  }
+
+  .rule { height: 1px; background: var(--border); }
+
+  .figures {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    padding-top: 34px;
+  }
+
+  .figure { display: flex; flex-direction: column; gap: 10px; }
+
+  .value {
+    font-family: 'JetBrains Mono Variable', monospace;
+    font-size: 44px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .caption {
+    font-family: 'JetBrains Mono Variable', monospace;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--fg-muted);
+  }
+</style>
+</head>
+<body>
+  <div class="top">
+    <h1>Samuel Chen</h1>
+    <p class="meta">MIT CS-AI '27 &middot; AI systems, and the measurement that decides whether they worked</p>
+  </div>
+
+  <div>
+    <div class="rule"></div>
+    <div class="figures">
+      <div class="figure">
+        <span class="value">22.5 pts</span>
+        <span class="caption">the measured noise floor — any smaller improvement is not a result</span>
+      </div>
+      <div class="figure">
+        <span class="value">&minus;$188,718</span>
+        <span class="caption">the biggest agent-choice lift, once its cost is paid across every channel</span>
+      </div>
+      <div class="figure">
+        <span class="value">0.219 ft</span>
+        <span class="caption">a Kalman filter with no training data beat every trained network</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

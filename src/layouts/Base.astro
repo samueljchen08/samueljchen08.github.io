@@ -14,6 +14,9 @@ interface Props {
 
 const { title, description, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site!);
+/* Social preview card. Must be an absolute URL — relative paths are ignored by most
+   platforms. Rebuild it from scripts/og-card.html if the headline figures change. */
+const ogImage = new URL('/og.png', Astro.site!);
 ---
 
 <!doctype html>
@@ -32,7 +35,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site!);
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {!noindex && <meta property="og:url" content={canonical} />}
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Samuel Chen — MIT CS-AI '27, with three measured results from his projects" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
     <script is:inline>
       (function () {
         var stored = null;

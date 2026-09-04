@@ -24,6 +24,16 @@ test('fonts are self-hosted, nothing from Google', () => {
   assert.doesNotMatch(page, /fonts\.googleapis\.com|fonts\.gstatic\.com/);
 });
 
+test('social preview card ships and is referenced absolutely', () => {
+  assert.ok(existsSync(join(dist, 'og.png')), 'og.png is in the build');
+  const page = html('index.html');
+  assert.ok(
+    page.includes('property="og:image" content="https://samueljchen08.github.io/og.png"'),
+    'og:image is an absolute URL — relative paths are ignored by most platforms',
+  );
+  assert.match(page, /name="twitter:card" content="summary_large_image"/);
+});
+
 test('robots and favicon ship', () => {
   assert.ok(existsSync(join(dist, 'robots.txt')));
   assert.ok(existsSync(join(dist, 'favicon.svg')));
