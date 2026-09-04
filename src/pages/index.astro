@@ -24,7 +24,7 @@ const locations = person.locations.join(' / ');
     <section class="hero">
       <div class="container hero-inner">
         {/* Decorative: the name it belongs to is the very next thing announced. */}
-        <img class="portrait" src="/headshot.webp" alt="" width="150" height="150" />
+        <img class="portrait" src="/headshot.webp" alt="" width="180" height="180" />
         <div class="hero-text">
         <h1>{person.name}</h1>
         <p class="meta mono">MIT CS-AI '{gradYear} · {locations}<span class="cursor" aria-hidden="true"></span></p>
@@ -120,8 +120,10 @@ const locations = person.locations.join(' / ');
   .hero-text { min-width: 0; }
   .portrait {
     flex-shrink: 0;
-    width: 150px;
-    height: 150px;
+    /* Sized to the text beside it: the circle spans from the top of the name to the
+       bottom of the action row, which measures ~184px at desktop widths. */
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid var(--border);
@@ -218,7 +220,7 @@ const locations = person.locations.join(' / ');
   @media (max-width: 767px) {
     .hero { padding: var(--space-5) 0 var(--space-4); }
     .hero-inner { gap: var(--space-3); }
-    .portrait { width: 92px; height: 92px; }
+    .portrait { width: 108px; height: 108px; }
   }
   @media (max-width: 480px) {
     .hero-inner { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
