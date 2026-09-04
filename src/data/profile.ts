@@ -24,6 +24,10 @@ export interface Role {
 
 export interface Activity {
   name: string;
+  /** A square logo in `public/logos/`; falls back to a monogram tile. */
+  logo?: string;
+  /** Two or three letters for the tile when there is no logo file. */
+  mark?: string;
   role?: string;
   start?: string;
   end?: string;
@@ -186,17 +190,33 @@ export const activities: Activity[] = [
     role: 'Recruited Collegiate Athlete (Point Guard)',
     start: 'Sep 2023',
     end: 'May 2026',
+    logo: '/logos/ncaa.jpg',
+    mark: 'NC',
     bullets: [
       'Appeared in all 24 games as a freshman and played 6th most minutes on team, averaging 15.4 minutes per game',
       'Scored 10 points, grabbed 4 rebounds, and distributed 4 assists against the #4 D3 team in the country, Keene State',
       '6th in points and 8th in assists in Washington State High School Basketball, 4-year varsity starter in largest division (4A)',
     ],
   },
-  // USER-SUPPLIED title (2026-09-03); the résumé PDF lists the club without a title.
-  { name: 'Sloan Business Club', role: 'Managing Director of Finance' },
-  { name: 'StartLabs', role: 'VP of Corporate Relations' },
-  { name: 'Splash' },
-  { name: 'Brass Rat Investments', role: 'Tech Sector Analyst' },
+  {
+    name: 'Sloan Business Club',
+    role: 'Managing Director of Finance',
+    logo: '/logos/sloan-business-club.jpg',
+    mark: 'SBC',
+  },
+  {
+    name: 'StartLabs',
+    role: 'VP of Corporate Relations',
+    logo: '/logos/startlabs.jpg',
+    mark: 'SL',
+  },
+  { name: 'Splash!', role: 'Teacher', logo: '/logos/splash.jpg', mark: 'SP' },
+  {
+    name: 'Brass Rat Investments',
+    role: 'Tech Sector Analyst',
+    logo: '/logos/brass-rat.jpg',
+    mark: 'BR',
+  },
 ];
 
 /**
