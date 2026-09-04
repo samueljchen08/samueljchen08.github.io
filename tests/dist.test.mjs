@@ -38,3 +38,10 @@ test('opsgym project page builds with its headline figures', () => {
   assert.ok(page.includes('https://github.com/samueljchen08/opsgym'));
   assert.ok(page.includes('class="table-wrap"'), 'markdown tables are wrapped for horizontal scroll');
 });
+
+test('agentic-commerce-lab page builds with the live report link', () => {
+  const page = html('projects/agentic-commerce-lab/index.html');
+  assert.ok(page.includes('188,718'));
+  assert.ok(page.includes('https://samueljchen08.github.io/agentic-commerce-lab/'));
+  assert.ok(page.includes('E1a'));
+});

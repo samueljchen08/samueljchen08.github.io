@@ -1,0 +1,111 @@
+---
+title: 'Agentic Commerce Lab'
+order: 2
+question: 'When an AI agent does the buying, which merchant lever is actually worth pulling?'
+period: '2026'
+repo: 'https://github.com/samueljchen08/agentic-commerce-lab'
+live: 'https://samueljchen08.github.io/agentic-commerce-lab/'
+stack: ['Python', 'Bayesian inference', 'claude-sonnet-5', 'HTML']
+headline:
+  value: '−$188,718'
+  caption: 'the lever with the biggest agent-choice lift, once its cost is paid across every channel'
+results:
+  - value: '300'
+    caption: 'real probes of claude-sonnet-5 · 60 mandates · 5 arms'
+  - value: '+1.69 pp'
+    caption: 'free-shipping selection lift · P(effect > 0) = 1.000'
+  - value: '0.7456'
+    caption: 'measured intraclass correlation — why probes are clustered by mandate'
+  - value: 'E1a'
+    caption: 'evidence class: one real provider, one frozen candidate set'
+limits: 'Evidence class E1a: one real provider (claude-sonnet-5), one frozen candidate set, one prompt. That is one run against one model and does not license a general claim about AI buyer agents — the repository says so in its own words. The second-provider comparison is built but has not been run live, and the merchant economics use modeled, not observed, order volumes.'
+---
+
+A merchant-side decision system for agent-mediated demand. It runs controlled experiments
+in which real AI buyer agents choose among a frozen competitive set, changes one
+merchant-controlled variable at a time, measures the causal effect on agent choice, and
+translates that effect through merchant unit economics into a ranked list of actions — by
+modeled incremental contribution profit **across every channel a merchant sells through,
+not just the agent channel.**
+
+## The wedge
+
+Every tool in this space measures whether a merchant *appears* in AI answers. None of them
+tell a merchant what to *change*, or what that change is worth.
+
+The reason that gap exists is that the obvious move is usually wrong. Free shipping doesn't
+know an order came from an AI agent instead of a human on the website; it pays out on all
+of it.
+
+On the synthetic system-check catalog, free shipping wins **+8.68 percentage points of
+agent selection** — the single largest lift of any tested lever — and **costs $883,432**
+once its price is paid across the merchant's entire order volume instead of just the ~3%
+an agent influences. The naive read (biggest lift → do it first) and the correct read
+(biggest lift → check the denominator) point in opposite directions.
+
+That correction — `Δtotal = agent_gain − non_agent_exposure`, not "contribution per agent
+order" — is the product.
+
+## Does it hold up on a real model?
+
+Against a sourced catalog of 11 real competitor desks plus one fictional focal product,
+`claude-sonnet-5` was probed **300 times across 60 realistic buyer mandates and 5
+experimental arms.**
+
+**Selection effects**
+
+| Lever | Effect | 95% interval | P(>0) |
+| --- | --- | --- | --- |
+| Free standard shipping (all channels) | +1.69 pp | [+0.04, +6.22] | 1.000 |
+
+**Ranked actions** — modeled contribution, all channels
+
+| Verdict | Action | Modeled contribution |
+| --- | --- | --- |
+| PROMISING | Do nothing | $0 |
+| INCONCLUSIVE | Complete structured attributes in agent feed | −$8,966 |
+| INCONCLUSIVE | Expose existing 7-day delivery SLA in feed | −$10,309 |
+| REJECTED_VALUE | Free standard shipping (all channels) | −$188,718 |
+| REJECTED_VALUE | Cut list price 5% ($474) | −$236,982 |
+
+Same pattern, real model: a statistically decisive, positive selection effect
+(P(effect > 0) = 1.000) that is still the wrong action once its cost is integrated over
+real order volume.
+
+## How it works
+
+Buyer mandates carry structured intent. Experiment arms change one merchant-controlled
+variable at a time, with candidate order randomized-but-paired to cancel position bias and
+everything else in the catalog frozen. Real AI buyer-agent probes run against a closed
+candidate set with a minimal-output JSON schema, and the raw response is persisted before
+parsing. A versioned parser produces choice records and never forces an unresolved mention
+onto a candidate in the set. A mandate-clustered Bayesian estimator then returns
+P(effect > 0) as a real posterior probability — ICC-aware, and valid under optional
+stopping.
+
+The live report is an interactive decision ledger built from a real experiment's output.
+
+## Evidence classes
+
+Every number the lab produces carries a tier, and the codebase enforces never promoting a result up a tier or reusing a stochastic model response as a fresh replication.
+
+| Class | Environment | May claim |
+| --- | --- | --- |
+| E0 | simulated oracle, known coefficients | the software behaves correctly under known assumptions |
+| E1a | one real provider, frozen candidate set | causal, within that model / prompt / candidate environment |
+| E1b | two providers agreeing on rank | effect is robust across tested models |
+| E2 | live retrieval surface, not randomized | association on an external surface |
+| E3 | randomized merchant test | causal in the merchant population |
+| E4 | orders, returns, margin linked to treatment | realized incremental contribution |
+
+This lab has real, spent-money data at **E1a**. The simulated oracle (E0) is free and unlimited and is used for all structural development — it is never cited as evidence about how a real agent behaves.
+
+## Engineering decisions that carry the claim
+
+- **Bayesian clustered inference, not a t-test.** Replications of the same buyer mandate are correlated (measured intraclass correlation **0.7456**), so probe count overstates precision unless you cluster on mandate. The estimator is a Dirichlet-weighted bootstrap over mandates, which makes P(effect > 0) a genuine posterior probability and makes optional stopping valid.
+- **A `NO_EFFECT` status distinct from `INCONCLUSIVE`.** A null is only called decisively when the 90% interval sits entirely inside a region of practical equivalence around zero. Two arms in the real run landed exactly tied with control; resampling that result up to 64× the sample size keeps P(effect > 0) pinned at ~0.50 — the signature of "nothing here," not "ask again later."
+- **Integer-cent money everywhere.** No float ever touches a dollar figure.
+- **Write-before-parse.** The raw provider response is persisted to disk before it is parsed; a failed write means the probe did not happen and is retried.
+- **A cost preflight that is a hard gate.** Every real dispatch measures token counts against the real catalog and prompt before spending, and refuses to run above a configured budget.
+- **Never force an entity match.** If a model names something outside the closed candidate set, the parser records the raw text and drops the selection rather than coercing it to the nearest product.
+- **Golden parser fixtures from ~1,770 real captured responses**, classified by what actually went wrong — truncated JSON, prose before the object, empty responses.
