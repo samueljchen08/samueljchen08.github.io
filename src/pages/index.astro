@@ -16,13 +16,6 @@ const experience = roles.map((r) => ({
   bullets: r.bullets.slice(0, 2),
 }));
 
-const offKeyboard = activities.map((a) => ({
-  dates: a.start ? `${a.start} – ${a.end}` : '',
-  heading: a.name,
-  sub: a.role,
-  bullets: a.bullets?.slice(0, 1),
-}));
-
 const description =
   "Samuel Chen — MIT Computer Science (AI) '27. Projects in agentic RL environments, causal experiments on AI buyer agents, and sports tracking; experience at Nexus AI, Goldman Sachs, Barings, and Cercano.";
 
@@ -65,8 +58,20 @@ const locations = person.locations.join(' / ');
     </Section>
 
     <Section id="activities" label="off the keyboard">
-      <Timeline items={offKeyboard} />
-      <p class="mono muted interests">interests · {interests.join(' · ')}</p>
+      <ul class="activities">
+        {activities.map((a) => (
+          <li>
+            <h3>{a.name}</h3>
+            {a.role && <p class="activity-role">{a.role}</p>}
+          </li>
+        ))}
+      </ul>
+      <div class="interests">
+        <p class="label">interests</p>
+        <ul class="tags">
+          {interests.map((i) => <li><span class="tag tag--accent">{i}</span></li>)}
+        </ul>
+      </div>
     </Section>
   </main>
 </Base>
@@ -86,6 +91,23 @@ const locations = person.locations.join(' / ');
   .muted { color: var(--fg-muted); margin: 0 0 6px; }
   .edu h3 { margin-bottom: 6px; }
   .sub-label { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; color: var(--fg-muted); margin: var(--space-3) 0 var(--space-1); }
-  .interests { margin-top: var(--space-3); max-width: none; }
+  /* Name and title only — no dates column, no bullets. */
+  .activities { list-style: none; padding: 0; margin: 0; max-width: none; }
+  .activities li { margin: 0; padding: var(--space-2) 0; border-top: 1px solid var(--border); }
+  .activities li:last-child { border-bottom: 1px solid var(--border); }
+  .activities h3 { font-size: 1.1rem; }
+  .activity-role { font-family: var(--font-mono); font-size: 0.8rem; color: var(--fg-muted); margin: 4px 0 0; }
+  /* A bar across the bottom: the `// interests` label, then every interest
+     as a chip outlined in the accent, all on one flowing line. */
+  .interests {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+  }
+  .interests .label { margin: 0; white-space: nowrap; }
+  .interests .tag--accent { border-color: var(--accent); color: var(--fg); }
   @media (max-width: 767px) { .hero { padding: var(--space-5) 0 var(--space-4); } }
 </style>
