@@ -85,10 +85,10 @@ test('homepage: hero has meta line and three actions, no tagline', () => {
 
 test('homepage: projects carousel, in order and without the stat column', () => {
   const page = html('index.html');
-  const i1 = page.indexOf('href="/projects/opsgym/"');
-  const i2 = page.indexOf('href="/projects/agentic-commerce-lab/"');
-  const i3 = page.indexOf('href="/projects/multi-object-tracking/"');
-  assert.ok(i1 > -1 && i2 > i1 && i3 > i2, 'projects appear in order');
+  const i1 = page.indexOf('href="/projects/multi-object-tracking/"');
+  const i2 = page.indexOf('href="/projects/opsgym/"');
+  const i3 = page.indexOf('href="/projects/agentic-commerce-lab/"');
+  assert.ok(i1 > -1 && i2 > i1 && i3 > i2, 'tracking, then opsgym, then the lab');
   for (const fig of ['22.5 pts', '−$188,718', '0.219 ft']) {
     assert.ok(!page.includes(fig), `${fig} belongs to the project page, not the card`);
   }
@@ -118,8 +118,12 @@ test('project page: result strip, limits callout, toc, prev/next', () => {
   assert.ok(page.includes('Evidence class E1a'));
   assert.match(page, /<nav[^>]*aria-label="On this page"/);
   assert.ok(page.includes('href="#the-wedge"'), 'toc links to a heading');
+  // The lab is last now, so it has a previous project and no next one.
   assert.ok(page.includes('href="/projects/opsgym/"'), 'prev link');
-  assert.ok(page.includes('href="/projects/multi-object-tracking/"'), 'next link');
+  assert.doesNotMatch(page, /pager[^>]*>[\s\S]*?multi-object-tracking/, 'no next link on the last project');
+  // The first project has a next and no previous.
+  const first = html('projects/multi-object-tracking/index.html');
+  assert.ok(first.includes('href="/projects/opsgym/"'), 'tracking pages forward to opsgym');
 });
 
 test('resume page renders every role and the PDF button', () => {
