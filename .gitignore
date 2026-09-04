@@ -28,3 +28,6 @@ screenshots/
 
 # SDD working files
 .superpowers/
+
+# Source logo originals (copies live in public/logos/)
+Logos/

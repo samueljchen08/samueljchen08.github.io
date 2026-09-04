@@ -85,7 +85,9 @@ const { role } = Astro.props;
     background: var(--bg);
     overflow: hidden;
   }
-  .tile img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+  /* The supplied marks are full-bleed colour squares, so the tile shows no inner border. */
+  .tile:has(img) { border-color: transparent; }
+  .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .mark {
     font-family: var(--font-mono);
     font-size: 0.85rem;

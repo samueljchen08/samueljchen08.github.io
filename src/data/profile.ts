@@ -83,6 +83,7 @@ export const roles: Role[] = [
     end: 'Present',
     track: 'engineering',
     mark: 'NX',
+    logo: '/logos/nexus-ai.jpg',
     href: 'https://www.nexusbasketball.org/',
     bullets: [
       'Built ML pipelines and a retrieval-augmented scouting platform over multi-season NCAA data to forecast player performance and transfer fit.',
@@ -97,6 +98,7 @@ export const roles: Role[] = [
     end: 'Aug 2026',
     track: 'finance',
     mark: 'GS',
+    logo: '/logos/goldman-sachs.jpg',
     bullets: [
       'Supported 8 M&A and coverage teams across Financial Institutions with valuation and transaction analysis.',
       'Contributed to the buy-side advisory on the ~$5.5B acquisition of Steadfast Group.',
@@ -110,6 +112,7 @@ export const roles: Role[] = [
     end: 'Aug 2025',
     track: 'finance',
     mark: 'B',
+    logo: '/logos/barings.jpg',
     bullets: [
       'Led memo drafting for 4 debt and equity investments, building the cash-flow and returns analysis behind each.',
       'Pitched an exit strategy for a ~$50M oil and gas investment using a dynamic DCF and sum-of-the-parts model.',
@@ -123,6 +126,7 @@ export const roles: Role[] = [
     end: 'Aug 2024',
     track: 'finance',
     mark: 'CM',
+    logo: '/logos/cercano.jpg',
     bullets: [
       'Engineered 7 Python tools automating trading research and backtesting, from benchmark tracking to rolling correlations.',
       'Screened 3,000+ companies on FCF margin, EPS growth and ROIC for a $10B+ fund.',
@@ -136,6 +140,7 @@ export const roles: Role[] = [
     end: 'Sep 2024',
     track: 'engineering',
     mark: 'MIT',
+    logo: '/logos/mit-sloan.jpg',
     bullets: [
       'Coded 5 Monte Carlo season simulators in Python measuring dominance and competitive balance across major team sports.',
       'Analyzed 15+ sports to test how durable dominance relates to competitiveness.',
