@@ -1,23 +1,70 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Tags from '../../components/Tags.astro';
+import ResultStrip from '../../components/ResultStrip.astro';
+import Callout from '../../components/Callout.astro';
+import Toc from '../../components/Toc.astro';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+  const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, prev: projects[i - 1] ?? null, next: projects[i + 1] ?? null },
+  }));
 }
 
-const { project } = Astro.props;
-const { Content } = await render(project);
-const { title, question, repo, live } = project.data;
+const { project, prev, next } = Astro.props;
+const { Content, headings } = await render(project);
+const { title, question, period, repo, live, stack, results, limits } = project.data;
 ---
 
 <Base title={`${title} — Samuel Chen`} description={question}>
-  <main id="main">
-    <div class="container">
+  <main id="main" class="container project">
+    <header class="project-header">
       <h1>{title}</h1>
-      <p><a href={repo}>repo</a>{live && <> · <a href={live}>live report</a></>}</p>
-      <Content />
+      <p class="question">{question}</p>
+      <div class="meta">
+        <span class="mono period">{period}</span>
+        <Tags items={stack} />
+        <ul class="links mono">
+          <li><a href={repo} target="_blank" rel="noopener noreferrer">repo →</a></li>
+          {live && <li><a href={live} target="_blank" rel="noopener noreferrer">live report →</a></li>}
+        </ul>
+      </div>
+      <ResultStrip results={results} />
+    </header>
+
+    <div class="layout">
+      <article class="prose">
+        <Content />
+        <Callout title="limits">
+          <p>{limits}</p>
+        </Callout>
+      </article>
+      <Toc headings={headings} />
     </div>
+
+    <nav class="pager mono" aria-label="Other projects">
+      {prev ? <a href={`/projects/${prev.id}/`}>← {prev.data.title}</a> : <span />}
+      {next ? <a href={`/projects/${next.id}/`}>{next.data.title} →</a> : <span />}
+    </nav>
   </main>
 </Base>
+
+<style>
+  .project { padding-top: var(--space-5); }
+  .project-header h1 { font-size: clamp(2rem, 5vw, 3rem); }
+  .question { color: var(--fg-muted); font-size: 1.15rem; margin: var(--space-2) 0 var(--space-3); }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+  .period { color: var(--fg-muted); }
+  .links { list-style: none; padding: 0; margin: 0; display: flex; gap: var(--space-2); max-width: none; }
+  .links li { margin: 0; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: var(--space-5); align-items: start; }
+  .prose :global(h2) { margin: var(--space-5) 0 var(--space-2); padding-top: var(--space-2); border-top: 1px solid var(--border); font-size: 1.5rem; }
+  .prose :global(h3) { margin: var(--space-4) 0 var(--space-1); }
+  .prose :global(h2:first-child) { margin-top: var(--space-2); border-top: 0; padding-top: 0; }
+  .pager { display: flex; justify-content: space-between; gap: var(--space-2); margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--border); }
+  @media (max-width: 1023px) { .layout { grid-template-columns: 1fr; } }
+  @media (max-width: 767px) { .project { padding-top: var(--space-4); } }
+</style>

@@ -1,0 +1,24 @@
+---
+interface Props { headings: { depth: number; slug: string; text: string }[] }
+const { headings } = Astro.props;
+const items = headings.filter((h) => h.depth === 2);
+---
+
+{items.length > 1 && (
+  <nav class="toc" aria-label="On this page">
+    <p class="label">on this page</p>
+    <ol>
+      {items.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+    </ol>
+  </nav>
+)}
+
+<style>
+  .toc { position: sticky; top: 72px; font-size: 0.85rem; }
+  .toc .label { margin-bottom: var(--space-1); }
+  ol { list-style: none; padding: 0; margin: 0; }
+  li { margin: 0 0 6px; }
+  a { color: var(--fg-muted); }
+  a:hover { color: var(--fg); text-decoration: none; }
+  @media (max-width: 1023px) { .toc { display: none; } }
+</style>

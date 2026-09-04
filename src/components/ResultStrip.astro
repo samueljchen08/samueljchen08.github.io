@@ -1,0 +1,24 @@
+---
+interface Props { results: readonly { value: string; caption: string }[] }
+const { results } = Astro.props;
+---
+
+<dl class="results">
+  {results.map((r) => (
+    <div class="result">
+      <dt class="caption">{r.caption}</dt>
+      <dd class="value">{r.value}</dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .results {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px;
+    background: var(--border); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; margin: var(--space-4) 0;
+  }
+  .result { display: flex; flex-direction: column-reverse; gap: 6px; padding: var(--space-2) var(--space-3); background: var(--bg-raised); margin: 0; }
+  .value { font-family: var(--font-mono); font-size: 1.6rem; font-weight: 600; color: var(--accent); margin: 0; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .caption { font-family: var(--font-mono); font-size: 0.75rem; color: var(--fg-muted); line-height: 1.5; }
+</style>

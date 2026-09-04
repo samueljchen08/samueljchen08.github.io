@@ -80,3 +80,15 @@ test('homepage: experience, education, activities sections', () => {
   assert.ok(page.includes('Managing Director of Finance'));
   assert.ok(page.includes('VP of External Relations'));
 });
+
+test('project page: result strip, limits callout, toc, prev/next', () => {
+  const page = html('projects/agentic-commerce-lab/index.html');
+  assert.match(page, /class="results[^"]*"/);
+  assert.ok(page.includes('+1.69 pp'));
+  assert.match(page, /class="callout[^"]*"/);
+  assert.ok(page.includes('Evidence class E1a'));
+  assert.match(page, /<nav[^>]*aria-label="On this page"/);
+  assert.ok(page.includes('href="#the-wedge"'), 'toc links to a heading');
+  assert.ok(page.includes('href="/projects/opsgym/"'), 'prev link');
+  assert.ok(page.includes('href="/projects/multi-object-tracking/"'), 'next link');
+});
