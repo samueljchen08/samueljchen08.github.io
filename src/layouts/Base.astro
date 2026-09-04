@@ -37,7 +37,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site!);
         try { stored = localStorage.getItem('theme'); } catch (e) {}
         var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.dataset.theme = stored || (dark ? 'dark' : 'light');
-        document.documentElement.classList.add('js');
       })();
     </script>
   </head>
@@ -47,6 +46,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site!);
     <slot />
     <Footer />
     <script>
+      document.documentElement.classList.add('js');
       const els = document.querySelectorAll('.reveal');
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduce || !('IntersectionObserver' in window)) {

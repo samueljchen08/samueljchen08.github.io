@@ -1,12 +1,88 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import { person } from '../data/profile';
+import Section from '../components/Section.astro';
+import ProjectEntry from '../components/ProjectEntry.astro';
+import Timeline from '../components/Timeline.astro';
+import Tags from '../components/Tags.astro';
+import { person, education, roles, activities, skills, interests } from '../data/profile';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+
+const experience = roles.map((r) => ({
+  dates: `${r.start} – ${r.end}`,
+  heading: r.company,
+  sub: `${r.title} · ${r.location}`,
+  bullets: r.bullets.slice(0, 2),
+}));
+
+const offKeyboard = activities.map((a) => ({
+  dates: a.start ? `${a.start} – ${a.end}` : '',
+  heading: a.name,
+  sub: a.role,
+  bullets: a.bullets?.slice(0, 1),
+}));
+
+const description =
+  "Samuel Chen — MIT Computer Science (AI) '27. Projects in agentic RL environments, causal experiments on AI buyer agents, and sports tracking; experience at Nexus AI, Goldman Sachs, Barings, and Cercano.";
 ---
 
-<Base title="Samuel Chen" description="Samuel Chen — MIT Computer Science (AI) '27. AI systems, and the measurement that decides whether they work.">
+<Base title="Samuel Chen" description={description}>
   <main id="main">
-    <div class="container">
-      <h1>{person.name}</h1>
-    </div>
+    <section class="hero">
+      <div class="container">
+        <h1>{person.name}</h1>
+        <p class="meta mono">MIT CS-AI '27 · {person.locations[0]} / {person.locations[1]}<span class="cursor" aria-hidden="true"></span></p>
+        <div class="actions">
+          <a class="btn btn--primary" href={person.resumePdf}>résumé (pdf)</a>
+          <a class="btn" href={person.github} target="_blank" rel="noopener noreferrer">github</a>
+          <a class="btn" href={`mailto:${person.email}`}>email</a>
+        </div>
+      </div>
+    </section>
+
+    <Section id="work" label="selected work">
+      {projects.map((p) => <ProjectEntry project={p} />)}
+    </Section>
+
+    <Section id="experience" label="experience">
+      <Timeline items={experience} />
+    </Section>
+
+    <Section id="education" label="education & skills">
+      <div class="edu">
+        <h3>{education.school}</h3>
+        <p class="mono muted">{education.degree} · {education.minor}</p>
+        <p class="mono muted">GPA {education.gpa} · expected {education.expected} · {education.location}</p>
+        <h4 class="sub-label">coursework</h4>
+        <Tags items={education.coursework} />
+        <h4 class="sub-label">technical</h4>
+        <Tags items={skills} />
+      </div>
+    </Section>
+
+    <Section id="activities" label="off the keyboard">
+      <Timeline items={offKeyboard} />
+      <p class="mono muted interests">interests · {interests.join(' · ')}</p>
+    </Section>
   </main>
 </Base>
+
+<style>
+  .hero {
+    padding: var(--space-6) 0 var(--space-5);
+    background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+    background-size: 24px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .meta { margin: var(--space-2) 0 var(--space-3); color: var(--fg-muted); }
+  .cursor { display: inline-block; width: 0.55em; height: 1em; margin-left: 4px; vertical-align: -0.15em; background: var(--accent); animation: blink 1.1s steps(2, start) infinite; }
+  @keyframes blink { to { visibility: hidden; } }
+  @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+  .actions { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+  .muted { color: var(--fg-muted); margin: 0 0 6px; }
+  .edu h3 { margin-bottom: 6px; }
+  .sub-label { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; color: var(--fg-muted); margin: var(--space-3) 0 var(--space-1); }
+  .interests { margin-top: var(--space-3); max-width: none; }
+  @media (max-width: 767px) { .hero { padding: var(--space-5) 0 var(--space-4); } }
+</style>

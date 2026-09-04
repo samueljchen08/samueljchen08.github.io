@@ -52,3 +52,31 @@ test('multi-object-tracking page builds with the Kalman result', () => {
   assert.ok(page.includes('16,009'));
   assert.ok(page.includes('https://drive.google.com/file/d/14I8We1yRNw1d1kzCVHLzmc5P-jsfh__H/view'));
 });
+
+test('homepage: hero has meta line and three actions, no tagline', () => {
+  const page = html('index.html');
+  assert.ok(page.includes("MIT CS-AI '27 · Cambridge, MA / Bellevue, WA"));
+  assert.ok(page.includes('href="/samuel-chen-resume.pdf"'));
+  assert.ok(page.includes('href="mailto:samchen@mit.edu"'));
+  assert.doesNotMatch(page, /measurement machinery/);
+});
+
+test('homepage: three projects in order with headline figures', () => {
+  const page = html('index.html');
+  const i1 = page.indexOf('href="/projects/opsgym/"');
+  const i2 = page.indexOf('href="/projects/agentic-commerce-lab/"');
+  const i3 = page.indexOf('href="/projects/multi-object-tracking/"');
+  assert.ok(i1 > -1 && i2 > i1 && i3 > i2, 'projects appear in order');
+  for (const fig of ['22.5 pts', '−$188,718', '0.219 ft']) assert.ok(page.includes(fig), fig);
+});
+
+test('homepage: experience, education, activities sections', () => {
+  const page = html('index.html');
+  assert.match(page, /id="experience"/);
+  const ig = page.indexOf('Goldman Sachs');
+  const ins = page.indexOf('Nexus AI');
+  assert.ok(ins > -1 && ig > ins, 'Nexus AI precedes Goldman');
+  assert.ok(page.includes('4.95/5.0'));
+  assert.ok(page.includes('Managing Director of Finance'));
+  assert.ok(page.includes('VP of External Relations'));
+});

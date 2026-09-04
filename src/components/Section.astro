@@ -1,0 +1,17 @@
+---
+interface Props { id: string; label: string }
+const { id, label } = Astro.props;
+---
+
+<section id={id} class="section reveal">
+  <div class="container">
+    <h2 class="label">{label}</h2>
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section { padding: var(--space-5) 0 0; }
+  .section + .section { border-top: 1px solid var(--border); margin-top: var(--space-5); }
+  @media (max-width: 767px) { .section { padding-top: var(--space-4); } .section + .section { margin-top: var(--space-4); } }
+</style>
