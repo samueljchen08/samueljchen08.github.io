@@ -92,3 +92,14 @@ test('project page: result strip, limits callout, toc, prev/next', () => {
   assert.ok(page.includes('href="/projects/opsgym/"'), 'prev link');
   assert.ok(page.includes('href="/projects/multi-object-tracking/"'), 'next link');
 });
+
+test('resume page renders every role and the PDF button', () => {
+  const page = html('resume/index.html');
+  assert.match(page, /<title>Résumé — Samuel Chen<\/title>/);
+  assert.ok(page.includes('href="/samuel-chen-resume.pdf"'));
+  for (const c of ['Nexus AI (Courtex)', 'Goldman Sachs', 'Barings', 'Cercano Management (Vulcan Capital)', 'MIT Sloan School of Management']) {
+    assert.ok(page.includes(c), c);
+  }
+  assert.ok(page.includes('Recruited Collegiate Athlete (Point Guard)'));
+  assert.ok(page.includes('Fantasy Football'));
+});

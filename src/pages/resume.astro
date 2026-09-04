@@ -1,0 +1,95 @@
+---
+import Base from '../layouts/Base.astro';
+import { person, education, roles, activities, skills, interests } from '../data/profile';
+---
+
+<Base title="Résumé — Samuel Chen" description="Samuel Chen's résumé: MIT Computer Science (AI) '27, Nexus AI co-founder, Goldman Sachs, Barings, Cercano Management, MIT Sloan research.">
+  <main id="main" class="container resume">
+    <header class="top">
+      <div>
+        <h1>{person.name}</h1>
+        <p class="mono muted contact">
+          {person.locations.join(' / ')} · <a href={`mailto:${person.email}`}>{person.email}</a> · {person.phone} ·
+          <a href={person.linkedin} target="_blank" rel="noopener noreferrer">linkedin</a> ·
+          <a href={person.github} target="_blank" rel="noopener noreferrer">github</a>
+        </p>
+      </div>
+      <a class="btn btn--primary" href={person.resumePdf}>download pdf</a>
+    </header>
+
+    <section>
+      <h2 class="label">education</h2>
+      <div class="row">
+        <div class="row-head">
+          <h3>{education.school}</h3>
+          <span class="mono muted">{education.location} · expected {education.expected}</span>
+        </div>
+        <p>{education.degree}; {education.minor}. GPA {education.gpa}.</p>
+        <p class="small"><strong>Coursework:</strong> {education.coursework.join(', ')}</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="label">experience</h2>
+      {roles.map((r) => (
+        <div class="row">
+          <div class="row-head">
+            <h3>{r.company}</h3>
+            <span class="mono muted">{r.location} · {r.start} – {r.end}</span>
+          </div>
+          <p class="title">{r.title}</p>
+          <ul>{r.bullets.map((b) => <li>{b}</li>)}</ul>
+        </div>
+      ))}
+    </section>
+
+    <section>
+      <h2 class="label">leadership & activities</h2>
+      {activities.map((a) => (
+        <div class="row">
+          <div class="row-head">
+            <h3>{a.name}</h3>
+            {a.start && <span class="mono muted">{a.start} – {a.end}</span>}
+          </div>
+          {a.role && <p class="title">{a.role}</p>}
+          {a.bullets && <ul>{a.bullets.map((b) => <li>{b}</li>)}</ul>}
+        </div>
+      ))}
+    </section>
+
+    <section>
+      <h2 class="label">skills & interests</h2>
+      <p><strong>Technical:</strong> {skills.join(', ')}</p>
+      <p><strong>Interests:</strong> {interests.join(', ')}</p>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .resume { padding-top: var(--space-5); }
+  .top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-4); }
+  .top h1 { font-size: clamp(2rem, 5vw, 3rem); }
+  .muted { color: var(--fg-muted); }
+  .contact { margin: var(--space-1) 0 0; max-width: none; }
+  section { margin-top: var(--space-4); }
+  .row { padding: var(--space-2) 0; border-top: 1px solid var(--border); }
+  .row-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-1); align-items: baseline; }
+  h3 { font-size: 1.05rem; }
+  .title { font-style: italic; color: var(--fg-muted); margin: 2px 0 var(--space-1); }
+  .row ul { margin-bottom: 0; font-size: 0.95rem; }
+  .small { font-size: 0.9rem; }
+  p { max-width: none; }
+
+  @media print {
+    .resume { padding-top: 0; }
+    .top .btn { display: none; }
+    section { margin-top: 12pt; break-inside: avoid; }
+    .row { padding: 6pt 0; border-top: 0; }
+    .label::before { content: ''; }
+    .label { color: #000; border-bottom: 1px solid #000; text-transform: uppercase; font-weight: 700; margin-bottom: 4pt; }
+    h1 { font-size: 20pt; }
+    h3 { font-size: 11pt; }
+    .row ul, .small, .title, .contact { font-size: 10pt; }
+    li + li { margin-top: 2pt; }
+  }
+</style>
