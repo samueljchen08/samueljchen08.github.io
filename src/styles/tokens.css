@@ -1,0 +1,108 @@
+/* ============================================================================
+   THE AUDIT WORKPAPER — tokens
+   The physical scene: a working paper on a desk. Light by default because that
+   is where the sheet lives; the dark theme is the same sheet under a desk lamp
+   at night, not an inverted palette.
+   ========================================================================= */
+
+:root {
+  /* ---- stock: columnar analysis paper, pale sheet + green bar band ---- */
+  --stock:        #e9ede2;
+  --stock-band:   #d6e1c9;
+  --stock-raised: #f2f5ec;
+  --stock-edge:   #dfe4d6;
+
+  /* ---- printed ruling ---- */
+  --rule:        #a7b598;
+  --rule-strong: #6c7a60;
+
+  /* ---- ink ---- */
+  --ink:       #14180f;
+  --ink-muted: #4b5445;
+  --ink-faint: #575f50;
+
+  /* ---- pencil: the auditor's two colors ---- */
+  --red:      #a6302a;
+  --red-wash: #f0dfd9;
+  --blue:     #22528b;
+  --blue-wash:#dce5f0;
+
+  /* ---- folder ---- */
+  --manila: #b9954f;
+
+  --focus: var(--blue);
+
+  /* ---- type ---- */
+  --f-text: 'Libre Franklin Variable', 'Libre Franklin', -apple-system,
+            'Segoe UI', system-ui, sans-serif;
+  --f-data: 'Sometype Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --t-xs:   0.75rem;
+  --t-sm:   0.8125rem;
+  --t-base: 1rem;
+  --t-md:   1.125rem;
+  --t-lg:   1.375rem;
+  --t-xl:   1.875rem;
+  --t-2xl:  clamp(2.25rem, 1.5rem + 3.2vw, 3.75rem);
+  --t-3xl:  clamp(2.75rem, 1.4rem + 6vw, 5.5rem);
+
+  /* ---- spacing ---- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4.5rem;
+  --s-9: 7rem;
+
+  --sheet:  min(1120px, 100% - 2.5rem);
+  --measure: 68ch;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --stock:        #171b14;
+    --stock-band:   #1f2419;
+    --stock-raised: #21261c;
+    --stock-edge:   #232819;
+
+    --rule:        #39422f;
+    --rule-strong: #55604a;
+
+    --ink:       #e6ebde;
+    --ink-muted: #a3ae97;
+    --ink-faint: #939e88;
+
+    --red:      #e4796a;
+    --red-wash: #33201c;
+    --blue:     #86aee0;
+    --blue-wash:#1a2430;
+
+    --manila: #c9a96e;
+  }
+}
+
+:root[data-theme='dark'] {
+  --stock:        #171b14;
+  --stock-band:   #1f2419;
+  --stock-raised: #21261c;
+  --stock-edge:   #232819;
+
+  --rule:        #39422f;
+  --rule-strong: #55604a;
+
+  --ink:       #e6ebde;
+  --ink-muted: #a3ae97;
+  --ink-faint: #939e88;
+
+  --red:      #e4796a;
+  --red-wash: #33201c;
+  --blue:     #86aee0;
+  --blue-wash:#1a2430;
+
+  --manila: #c9a96e;
+}

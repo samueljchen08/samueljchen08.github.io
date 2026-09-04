@@ -1,0 +1,509 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Sheet from '../components/Sheet.astro';
+import Schedule from '../components/Schedule.astro';
+import Mark from '../components/Mark.astro';
+import Figure from '../components/Figure.astro';
+import CrossRef from '../components/CrossRef.astro';
+import {
+  person,
+  scope,
+  roles,
+  coursework,
+  athletics,
+  interests,
+  skills,
+} from '../data/profile';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const engineering = roles.filter((r) => r.track === 'engineering');
+const markets = roles.filter((r) => r.track === 'markets');
+
+const title = `${person.name} — AI systems, and the measurement that decides whether they worked`;
+const description =
+  'MIT CS-AI 2027. Working papers behind three projects: an agentic RL environment with a measured noise floor, a causal experiment on AI buyer agents, and a sports-tracking study whose answer was no.';
+---
+
+<Base title={title} description={description}>
+  <main id="main">
+    <Sheet index="A-1" caption="Working papers — S. Chen">
+      {/* ===== ENGAGEMENT HEADER ===== */}
+      <header class="engagement">
+        <div>
+          <h1 class="engagement-name">{person.name}</h1>
+          <p class="engagement-scope">{scope}</p>
+          <div class="engagement-meta">
+            <a class="action action--primary" href={person.resumePdf}>
+              Résumé (PDF)
+            </a>
+            <a class="action" href={person.github} target="_blank" rel="noopener noreferrer">
+              GitHub
+            </a>
+            <a class="action" href={`mailto:${person.email}`}>Email</a>
+          </div>
+        </div>
+
+        <aside class="legend" aria-label="Sheet index and tick legend">
+          <dl class="legend-id">
+            <div><dt class="label">Index</dt><dd class="index">A-1</dd></div>
+            <div><dt class="label">Prepared</dt><dd class="num">MIT ’27 · CS-AI</dd></div>
+            <div><dt class="label">Located</dt><dd class="num">{person.termBase}</dd></div>
+          </dl>
+          <hr class="rule" />
+          <p class="label legend-title">Tick legend</p>
+          <ul class="legend-list draw">
+            <li>
+              <Mark kind="agreed" size={15} delay={0} />
+              <span>agreed to source — the figure links to where it came from</span>
+            </li>
+            <li>
+              <Mark kind="notCleared" size={15} color="blue" delay={140} />
+              <span>stated, and deliberately not done</span>
+            </li>
+            <li>
+              <Mark kind="note" size={15} color="blue" delay={280} />
+              <span>see the disclosure note</span>
+            </li>
+          </ul>
+        </aside>
+      </header>
+
+      {/* ===== SCHEDULE A — SELECTED WORK ===== */}
+      <Schedule title="Schedule A — Selected work" tally={`${projects.length} sheets`} id="work">
+        <div class="cols cols--work">
+          <span>Project — what it established</span>
+          <span class="money">Measured</span>
+          <span>Ref</span>
+        </div>
+
+        {projects.map((p) => (
+          <article class="row row--work">
+            <div class="work-main">
+              <h3 class="work-title">
+                <a href={`/projects/${p.id}/`}>{p.data.title}</a>
+              </h3>
+              <p class="work-question num">{p.data.question}</p>
+              <p class="work-answer">{p.data.answer}</p>
+              <ul class="chips">
+                {p.data.stack.map((s) => <li class="chip">{s}</li>)}
+              </ul>
+            </div>
+
+            <div class="money work-measured">
+              <Figure
+                value={p.data.measured.value}
+                source={p.data.measured.source}
+                href={p.data.measured.href}
+              />
+              <span class="provenance">{p.data.measured.source}</span>
+              {/* Every figure here carries a caveat its own repository states,
+                  so every figure gets the reference mark that points at it. */}
+              <a class="see-note" href="#disclosure-heading">
+                <Mark kind="note" size={12} color="blue" />
+                <span>see note</span>
+              </a>
+            </div>
+
+            <div class="work-ref">
+              <CrossRef to={`/projects/${p.id}/`} index={p.data.index} />
+            </div>
+          </article>
+        ))}
+
+        <hr class="rule-close" />
+      </Schedule>
+
+      {/* ===== DISCLOSURE ===== */}
+      <section class="note note--stamped" aria-labelledby="disclosure-heading">
+        <div class="note-head">
+          <Mark kind="notCleared" size={17} color="blue" />
+          <h2 class="schedule-title" id="disclosure-heading">Disclosure — what is not done</h2>
+        </div>
+        <span class="stamp stamp--blue note-stamp" aria-hidden="true">Not cleared</span>
+        <div class="note-body prose-sm">
+          <p>
+            Each sheet carries the limits its own repository states. They are here rather
+            than buried because the limits are the reason to trust everything above them:
+            a noise floor that rules out most of the improvements a paper would report, an
+            evidence class attached to a single real run, and a detector that only found
+            the ball in a tenth of the frames.
+          </p>
+          <ul class="disclosure-list">
+            {projects.map((p) => (
+              <li>
+                <span class="disclosure-ref">
+                  <Mark kind="notCleared" size={13} color="blue" />
+                  <CrossRef to={`/projects/${p.id}/`} index={p.data.index} />
+                </span>
+                <span>{p.data.disclosure}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ===== SCHEDULE B — ENGINEERING ===== */}
+      <Schedule title="Schedule B — Engineering" tally={`${engineering.length} engagements`} id="engineering">
+        {engineering.map((r) => (
+          <article class="row row--role">
+            <div class="role-when">
+              <span class="num role-dates">{r.start} — {r.end}</span>
+              <span class="role-loc">{r.location}</span>
+            </div>
+            <div class="role-main">
+              <h3 class="role-org">{r.org}</h3>
+              <p class="role-title">{r.title}</p>
+              <p class="role-proves">{r.proves}</p>
+              <ul class="role-points prose-sm">
+                {r.points.map((pt) => <li>{pt}</li>)}
+              </ul>
+            </div>
+          </article>
+        ))}
+        <hr class="rule-close" />
+      </Schedule>
+
+      {/* ===== SCHEDULE C — MARKETS ===== */}
+      <Schedule title="Schedule C — Markets" tally={`${markets.length} engagements`} id="markets">
+        <div class="schedule-preamble">
+          <p class="prose-sm">
+            Three summers spent where being wrong costs money. They are on this sheet for
+            what they prove to an engineer: quantitative work under deadline, and Python
+            tooling built for other people to make decisions on.
+          </p>
+        </div>
+        {markets.map((r) => (
+          <article class="row row--role">
+            <div class="role-when">
+              <span class="num role-dates">{r.start} — {r.end}</span>
+              <span class="role-loc">{r.location}</span>
+            </div>
+            <div class="role-main">
+              <h3 class="role-org">{r.org}</h3>
+              <p class="role-title">{r.title}</p>
+              <p class="role-proves">{r.proves}</p>
+              <ul class="role-points prose-sm">
+                {r.points.map((pt) => <li>{pt}</li>)}
+              </ul>
+            </div>
+          </article>
+        ))}
+        <hr class="rule-close" />
+      </Schedule>
+
+      {/* ===== SCHEDULE D — EDUCATION ===== */}
+      <Schedule title="Schedule D — Education" tally={person.graduation} id="education">
+        <article class="row row--role">
+          <div class="role-when">
+            <span class="num role-dates">2023 — 2027</span>
+            <span class="role-loc">{person.termBase}</span>
+          </div>
+          <div class="role-main">
+            <h3 class="role-org">{person.school}</h3>
+            <p class="role-title">{person.degree} · {person.minor}</p>
+            <dl class="facts">
+              <div><dt class="label">GPA</dt><dd class="num">{person.gpa}</dd></div>
+            </dl>
+            <p class="label facts-label">Relevant coursework</p>
+            <ul class="chips">
+              {coursework.map((c) => <li class="chip">{c}</li>)}
+            </ul>
+            <p class="label facts-label">Languages and tools</p>
+            <ul class="chips">
+              {[...skills.languages, ...skills.tools].map((s) => <li class="chip chip--tool">{s}</li>)}
+            </ul>
+          </div>
+        </article>
+        <hr class="rule-close" />
+      </Schedule>
+
+      {/* ===== SCHEDULE E — OFF THE CLOCK ===== */}
+      <Schedule title="Schedule E — Off the clock" tally="Point guard" id="athletics">
+        <article class="row row--role">
+          <div class="role-when">
+            <span class="num role-dates">{athletics.start} — {athletics.end}</span>
+            <span class="role-loc">{person.termBase}</span>
+          </div>
+          <div class="role-main">
+            <h3 class="role-org">{athletics.program}</h3>
+            <p class="role-title">{athletics.title}</p>
+            <ul class="role-points prose-sm">
+              {athletics.points.map((pt) => <li>{pt}</li>)}
+            </ul>
+            <p class="label facts-label">Also</p>
+            <ul class="chips">
+              {interests.map((i) => <li class="chip">{i}</li>)}
+            </ul>
+          </div>
+        </article>
+        <hr class="rule-close" />
+      </Schedule>
+
+      {/* ===== SIGN-OFF ===== */}
+      <footer class="signoff" id="contact">
+        <div class="signoff-main">
+          <h2 class="signoff-title">Get in touch</h2>
+          <ul class="signoff-list">
+            <li>
+              <span class="label">Email</span>
+              <a class="signoff-link" href={`mailto:${person.email}`}>{person.email}</a>
+            </li>
+            <li>
+              <span class="label">Phone</span>
+              <a class="signoff-link num" href={`tel:${person.phoneHref}`}>{person.phone}</a>
+            </li>
+            <li>
+              <span class="label">GitHub</span>
+              <a class="signoff-link" href={person.github} target="_blank" rel="noopener noreferrer">
+                {person.githubLabel}
+              </a>
+            </li>
+            <li>
+              <span class="label">LinkedIn</span>
+              <a class="signoff-link" href={person.linkedin} target="_blank" rel="noopener noreferrer">
+                {person.linkedinLabel}
+              </a>
+            </li>
+            <li>
+              <span class="label">Based</span>
+              <span class="signoff-link">{person.homeBase} · {person.termBase}</span>
+            </li>
+            <li>
+              <span class="label">Résumé</span>
+              <a class="signoff-link" href={person.resumePdf}>PDF</a>
+              <span class="signoff-sep">·</span>
+              <CrossRef to="/resume/" index="R-1" label="on this site" />
+            </li>
+          </ul>
+        </div>
+        <div class="signoff-mark">
+          <span class="stamp">Prepared by S. Chen</span>
+        </div>
+      </footer>
+    </Sheet>
+  </main>
+</Base>
+
+<style>
+  /* ---- actions ---- */
+  .action {
+    font-family: var(--f-data);
+    font-size: var(--t-sm);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    border-bottom: 1px solid var(--rule-strong);
+    padding-bottom: 2px;
+    transition: border-color 0.18s var(--ease), color 0.18s var(--ease);
+  }
+  .action:hover, .action:focus-visible { border-bottom-color: var(--red); color: var(--red); }
+  .action--primary { color: var(--red); border-bottom-color: var(--red); font-weight: 600; }
+
+  /* ---- legend panel ---- */
+  .legend {
+    border: 1px solid var(--rule-strong);
+    background: var(--stock);
+    padding: var(--s-4);
+    min-width: 20rem;
+    max-width: 22rem;
+  }
+
+  .legend-id { margin: 0 0 var(--s-3); display: grid; gap: var(--s-2); }
+  .legend-id > div { display: flex; justify-content: space-between; gap: var(--s-3); align-items: baseline; }
+  .legend-id dt { margin: 0; }
+  .legend-id dd { margin: 0; font-size: var(--t-sm); color: var(--ink); }
+
+  .legend-title { margin: var(--s-3) 0 var(--s-2); }
+
+  .legend-list { display: grid; gap: var(--s-2); }
+  .legend-list li {
+    display: grid;
+    grid-template-columns: 1.2rem 1fr;
+    gap: var(--s-2);
+    align-items: start;
+    font-size: var(--t-xs);
+    line-height: 1.45;
+    color: var(--ink-muted);
+  }
+  .legend-list svg { margin-top: 0.1em; }
+
+  /* ---- Schedule A rows ---- */
+  .cols--work, .row--work {
+    grid-template-columns: minmax(0, 1fr) 13.5rem 4.5rem;
+    align-items: start;
+  }
+
+  .work-title { font-size: var(--t-xl); letter-spacing: -0.03em; }
+  .work-title a {
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.18s var(--ease);
+  }
+  .work-title a:hover, .work-title a:focus-visible { border-bottom-color: var(--red); }
+
+  .work-question {
+    margin-top: var(--s-2);
+    font-size: var(--t-xs);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .work-answer {
+    margin-top: var(--s-3);
+    max-width: 58ch;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+
+  .work-measured { padding-top: var(--s-2); }
+  .see-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    margin-top: var(--s-2);
+    font-family: var(--f-data);
+    font-size: var(--t-xs);
+    color: var(--ink-faint);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.18s var(--ease), border-color 0.18s var(--ease);
+  }
+  .see-note:hover, .see-note:focus-visible {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+  }
+  .work-measured .figure-value { font-size: var(--t-lg); }
+  .work-measured .provenance { max-width: 13rem; margin-left: auto; text-align: right; text-wrap: balance; }
+  .work-ref { padding-top: var(--s-3); text-align: right; }
+
+  .chips { margin-top: var(--s-3); }
+
+  /* ---- disclosure ---- */
+  .note--stamped { position: relative; }
+  .note-stamp {
+    position: absolute;
+    top: var(--s-6);
+    right: var(--s-7);
+    font-size: var(--t-sm);
+  }
+  .note-head { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-4); }
+  .disclosure-list { margin-top: var(--s-4); display: grid; gap: var(--s-3); }
+  .disclosure-list li {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: var(--s-3);
+    align-items: start;
+  }
+  .disclosure-ref { display: inline-flex; align-items: center; gap: var(--s-2); }
+
+  /* ---- role rows ---- */
+  .row--role { grid-template-columns: 13rem minmax(0, 1fr); align-items: start; }
+  .schedule-preamble { padding: var(--s-4) var(--s-5) 0; }
+
+  .role-when { display: grid; gap: var(--s-1); padding-top: 0.35rem; }
+  .role-dates { font-size: var(--t-sm); color: var(--ink); font-weight: 500; }
+  .role-loc { font-size: var(--t-xs); color: var(--ink-faint); }
+
+  .role-org { font-size: var(--t-md); letter-spacing: -0.02em; }
+  .role-title { font-size: var(--t-sm); color: var(--ink-muted); margin-top: 2px; }
+  .role-proves {
+    margin-top: var(--s-3);
+    font-size: var(--t-sm);
+    color: var(--red);
+    max-width: 60ch;
+  }
+  .role-points { margin-top: var(--s-3); display: grid; gap: var(--s-2); }
+  .role-points li {
+    position: relative;
+    padding-left: var(--s-4);
+    font-size: var(--t-sm);
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+  .role-points li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 6px;
+    height: 1px;
+    background: var(--rule-strong);
+  }
+
+  /* ---- education facts ----
+     One fact, set as a compact inline pair. A wide multi-column strip holding a
+     single item reads as a missing second column. */
+  .facts {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    margin: var(--s-4) 0 0;
+  }
+  .facts > div { display: inline-flex; align-items: baseline; gap: var(--s-3); }
+  .facts dt { margin: 0; }
+  .facts dd { margin: 0; font-size: var(--t-md); font-weight: 600; }
+  .facts-label { margin-top: var(--s-4); }
+
+  /* ---- sign-off ---- */
+  .signoff {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--s-6);
+    padding: var(--s-6) var(--s-5) var(--s-8);
+    background: var(--stock-band);
+    border-top: 2px solid var(--rule-strong);
+  }
+  .signoff-title { font-size: var(--t-xl); letter-spacing: -0.03em; }
+  .signoff-list { margin-top: var(--s-4); display: grid; gap: var(--s-2); }
+  .signoff-list li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    flex-wrap: wrap;
+  }
+  .signoff-list .label { min-width: 5.5rem; flex: none; }
+  .signoff-link {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong);
+    transition: border-color 0.18s var(--ease), color 0.18s var(--ease);
+  }
+  a.signoff-link:hover, a.signoff-link:focus-visible { color: var(--red); border-bottom-color: var(--red); }
+  .signoff-sep { color: var(--ink-faint); }
+  .signoff-mark { flex: none; padding-bottom: var(--s-2); }
+
+  /* ---- responsive ---- */
+  @media (max-width: 940px) {
+    .legend { min-width: 0; max-width: none; }
+    .cols--work, .row--work { grid-template-columns: minmax(0, 1fr) 9rem 3.5rem; }
+    .work-measured .provenance { max-width: 9rem; }
+  }
+
+  @media (max-width: 720px) {
+    .legend { padding: var(--s-3); }
+    .cols--work { display: none; }
+    .row--work {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: 'main main' 'measured ref';
+      gap: var(--s-3);
+    }
+    .work-main { grid-area: main; }
+    .work-measured { grid-area: measured; text-align: left; padding-top: 0; }
+    .work-measured .provenance { margin-left: 0; text-align: left; max-width: none; }
+    .work-ref { grid-area: ref; padding-top: 0; align-self: end; }
+    .row--role { grid-template-columns: 1fr; gap: var(--s-3); }
+    .role-when { display: flex; gap: var(--s-3); align-items: baseline; padding-top: 0; }
+    .disclosure-list li { grid-template-columns: 1fr; gap: var(--s-1); }
+    .note-stamp { display: none; }
+    .signoff { flex-direction: column; align-items: flex-start; padding-inline: var(--s-4); }
+    .schedule-preamble { padding-inline: var(--s-4); }
+    .facts { gap: var(--s-5); }
+  }
+</style>

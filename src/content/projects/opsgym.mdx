@@ -1,0 +1,190 @@
+---
+index: 'W-1'
+title: 'opsgym'
+question: 'What makes an agentic RL environment trustworthy enough to train on?'
+answer: 'Measured the noise floor of the evaluation before reporting any result — then found that at this scale, most improvements a paper would publish are indistinguishable from re-running the same policy.'
+period: '2026'
+repo: 'https://github.com/samueljchen08/opsgym'
+stack: ['Python', 'SQLite', 'GRPO', 'LoRA', 'PyTorch']
+measured:
+  value: '22.5 pts'
+  source: 'README · Finding 10'
+  href: 'https://github.com/samueljchen08/opsgym#10-measure-the-noise-floor-before-reporting-any-delta'
+disclosure: 'No training run. No GPU. A single LoRA run on 495 records would produce a delta well inside the noise floor measured above — so the training code is written and wired, and deliberately unexecuted.'
+order: 1
+---
+
+An RL environment and synthetic data pipeline for enterprise billing-support agents:
+a simulated B2B SaaS company in SQLite, a tool layer standing in for the application,
+an LLM-simulated customer holding facts the agent must elicit, state-based verifiers,
+and the generation, validation, rollout and training machinery around them.
+
+Built to understand what makes an agentic RL environment trustworthy — not to
+demonstrate a training result.
+
+## Why billing disputes
+
+Stage 0 is upstream of everything. The capability was chosen by working backwards from
+**verifiability**: billing disputes were picked over general support because success
+reduces to four state assertions — a refund exists, against the right invoice, for the
+right amount, with approval when required — whereas general support reduces to a judged
+reply. A narrow, hard-verifiable scope beats a broad, softly-verified one.
+
+Two downstream design decisions were forced by that choice: refusal tasks require the
+world to contain evidence justifying refusal, and partial observability requires a user
+simulator.
+
+## Findings
+
+### State-based verification cannot see intent
+
+A trajectory scored **1.000** on a refusal task where the agent had *tried* to issue an
+incorrect refund. The tool rejected it on a bad invoice ID, and the empty refunds table
+looked identical to a correct refusal.
+
+Final state cannot distinguish "correctly refused" from "attempted the wrong action and
+fumbled." Trajectory-level hack detectors caught it because they read the transcript
+rather than the database. Outcome verification and process instrumentation catch
+different things; building only one leaves you unable to tell which.
+
+### Independent marginals destroy joint structure
+
+The first world generator drew every table independently. Marginals looked plausible;
+the joint was nonsense — **51 of 59 billing complaints sat on accounts with no matching
+billing evidence**. Tasks built on them are not hard, they are unsolvable through the
+observation space.
+
+Fixed with two-pass generation: an independent background pass, then a scenario pass
+planting causal chains (billing event → invoice pattern → ticket → customer message).
+Each planted chain is a task site with ground truth known by construction.
+
+### Isolation is correctness, not hygiene
+
+One group of k=8, same policy and seeds, run with per-episode snapshots against a shared
+world:
+
+| Condition | Rewards | Mean |
+| --- | --- | --- |
+| Isolated | 0.61 · 1.00 · 0.50 · 1.00 · 1.00 · 1.00 · 1.00 · 0.94 | **0.882** |
+| Shared | 0.61 · 1.00 · 1.00 · 0.61 · 0.61 · 0.61 · 0.61 · 0.61 | **0.708** |
+
+In the shared run, once refunds accumulate the assertions fail for everyone after.
+Reward became a function of position in the group rather than of the policy's actions,
+which makes a group-relative advantage meaningless.
+
+### A weak verifier hands out 12.5% false positives
+
+Identical trajectories scored under an outcome-only verifier and the full assertion set:
+**12.5% scored a perfect 1.0 under the weak grader and failed the full one**, all on
+ticket hygiene. Those are false positives RL would have reinforced.
+
+Comparing *mean reward* between a binary and a graded verifier is meaningless — different
+scales. Compare their pass/fail decisions.
+
+### Error clustering matters more than the false-positive rate
+
+The usual claim is "false positives are worse than false negatives." Too blunt. What
+decides how bad an error rate is, is whether errors are random or correlated with a
+behaviour class.
+
+| Grader | Accuracy | FP | FN | Error rate by task type |
+| --- | --- | --- | --- | --- |
+| Before | 71.0% | 18.8% | 10.3% | dup 8% / pro 50% / unp 50% — **clustered** |
+| After | 89.7% | 0.0% | 10.3% | dup 8% / pro 12% / unp 12% — flat |
+
+The clustering profile pointed straight at the defect. A grader wrong half the time about
+one task class and rarely about another is not noisy, it is systematically blind.
+
+### Correct-by-construction has one silent failure mode
+
+Inverse generation makes verifiers correct by construction — but only if the construction
+is correct. A generator that errs writes a **matching** error into the assertions, so the
+task agrees with itself perfectly and passes every coherence check while teaching the
+model something false.
+
+Six validation filters missed a wrong-amount defect for exactly this reason. The fix works
+only because its reference is the world rather than the task: a check derived from the same
+source as the thing it checks cannot falsify it. Defect catch rate 94% → 97%.
+
+### 94% of agentic trajectory tokens are environment output
+
+Across the SFT set, **4,020 of 71,433 tokens carry loss (5.6%)**. Mask everything the
+environment emitted. Train on tool results and the model learns to hallucinate
+observations rather than call tools and wait.
+
+The implementation trap: tokenize context and target separately and concatenate ids —
+tokenizing the joined string and hunting for the boundary silently trains on the first
+fragment of the tool output.
+
+### Rejection sampling over-samples easy tasks for free
+
+A task solved 5 times in 8 contributes 5 SFT trajectories; one solved twice contributes 2.
+Measured skew: **the easiest task contributed 2.5× as many training examples as the
+hardest solved one.** Nobody introduces this bias — it arrives with the filter, and it
+weights the dataset toward exactly what the model already handles.
+
+### Zero-variance groups link the data to the optimizer
+
+A GRPO group where all k rollouts score identically yields advantages of exactly zero and
+no gradient. Since P(all agree) = pᴳ + (1−p)ᴳ, a task solved 95% of the time is exactly as
+useless as one solved 5% of the time. Simulated over realistic task-set distributions at
+G=8, filtering to a 0.2–0.8 band cuts wasted rollout budget from **~22% to ~7%**.
+
+Difficulty filtering is a compute-efficiency argument, not hygiene — and a static task set
+decays in value as you train on it.
+
+### Measure the noise floor before reporting any delta
+
+An A/A test — the same policy evaluated twice, differing only in seed. 95th percentile of
+the observed difference:
+
+| Test tasks | k=4 | k=8 | k=16 |
+| --- | --- | --- | --- |
+| 5 | 0.300 | 0.225 | 0.162 |
+| 25 | 0.140 | 0.100 | 0.070 |
+| 100 | 0.070 | 0.049 | 0.034 |
+| 250 | 0.043 | 0.031 | 0.022 |
+
+At this project's n=5, k=8, **any improvement below 22.5 points is not a result.** Tasks
+needed for 80% power at k=8: 15 for a 20-point effect, 50 for 10 points, 200 for 5 points,
+~1,200 for 2 points.
+
+## Held-out evaluation
+
+Splits are held out by **world**, not by task — two tasks from one world share customers,
+invoice structure and injected defects, so a task-level split leaks. Verified: zero world
+overlap, zero customer overlap.
+
+| Metric | Value |
+| --- | --- |
+| pass@1 | 0.450 · 95% CI [0.325, 0.575] |
+| pass@4 | 0.929 |
+| Mean reward | 0.701 |
+| Truncation rate | 0.0% |
+| Violation rate | 25.0% |
+| Hack flag rate | 40.0% |
+| Mean turns | 9.3 |
+
+Assertion failures: explanation_posted 14, ticket_hygiene 13, refund_correct 8,
+no_refund_issued 4, policy_compliance 2. That breakdown is the error taxonomy a single
+scalar reward would have destroyed.
+
+## Validation funnel
+
+176 candidates, 30% carrying deliberately injected defects, reduced to 24 tasks:
+
+| Filter | Remaining | Rejected |
+| --- | --- | --- |
+| Raw candidates | 176 | — |
+| References resolve | 160 | −16 |
+| Assertions executable | 160 | — |
+| Ground truth matches world | 158 | −2 |
+| Evidence reachable | 157 | −1 |
+| Reference solution passes | 147 | −10 |
+| Discriminates good vs lazy | 147 | — |
+| Difficulty in band | 143 | −4 |
+| Deduplicated | 24 | −119 |
+
+Every rejection is logged with a reason. A funnel that discards silently gives you no
+quality signal. Deduplication removes 78% of what survives the earlier filters — the
+honest picture of template-based generation, and the argument for LLM generation next.

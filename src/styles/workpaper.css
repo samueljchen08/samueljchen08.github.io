@@ -1,0 +1,376 @@
+/* ============================================================================
+   THE AUDIT WORKPAPER — the world
+   Ruled schedules on green-bar stock, marked up in red and blue pencil.
+   ========================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--rule-strong) var(--stock);
+}
+
+body {
+  margin: 0;
+  background: var(--stock);
+  color: var(--ink);
+  font-family: var(--f-text);
+  font-size: var(--t-base);
+  line-height: 1.6;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- browser surfaces: these belong to the design, not to the browser ---- */
+::selection { background: var(--blue-wash); color: var(--ink); }
+:root { caret-color: var(--red); accent-color: var(--blue); }
+
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--stock); }
+::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border: 3px solid var(--stock);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--rule-strong); }
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+p { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+a { color: inherit; }
+
+/* =====================  SHEET  ===================== */
+
+.sheet {
+  width: var(--sheet);
+  margin-inline: auto;
+}
+
+/* The sheet edge: a working paper is a physical object with a boundary. */
+.sheet-body {
+  border-inline: 1px solid var(--rule);
+  background: var(--stock-raised);
+}
+
+/* =====================  RULES  ===================== */
+
+.rule       { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+.rule-heavy { border: 0; border-top: 2px solid var(--rule-strong); margin: 0; }
+
+/* The double rule that closes a schedule — an accounting convention that
+   genuinely means "this total is final". */
+.rule-close {
+  border: 0;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 3px double var(--rule-strong);
+  height: 4px;
+  margin: 0;
+}
+
+/* =====================  LABELS  ===================== */
+
+.label {
+  font-family: var(--f-data);
+  font-size: var(--t-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+
+.index {
+  font-family: var(--f-data);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--red);
+}
+
+/* The sheet's index sits on its folder tab — the one place the manila shows.
+   The manila carries the edge, not the field: a heavily tinted ground drops the
+   red index below the contrast floor in the dark theme, where the mix resolves
+   light. The tab is seated on the rail's bottom edge, so its open bottom runs
+   into the sheet the way a real tab does. */
+.index--tab {
+  position: relative;
+  padding: var(--s-1) var(--s-3);
+  background: color-mix(in srgb, var(--manila) 8%, var(--stock-raised));
+  border: 1px solid color-mix(in srgb, var(--manila) 70%, var(--rule));
+  border-bottom: 0;
+  border-radius: 3px 3px 0 0;
+  margin-bottom: calc(-1 * var(--s-2));
+}
+
+.num {
+  font-family: var(--f-data);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+}
+
+/* =====================  ENGAGEMENT HEADER  ===================== */
+
+.engagement {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--s-5);
+  align-items: start;
+  /* Kept tight so the second Schedule A row clears the fold on a laptop —
+     the schedule is the thesis, and one row of it is not the argument. */
+  padding: var(--s-5) var(--s-5) var(--s-4);
+}
+
+.engagement-name {
+  font-size: var(--t-3xl);
+  letter-spacing: -0.04em;
+  font-weight: 800;
+  line-height: 0.95;
+}
+
+.engagement-scope {
+  margin-top: var(--s-3);
+  font-size: var(--t-lg);
+  line-height: 1.35;
+  max-width: 34ch;
+  color: var(--ink);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+.engagement-meta {
+  margin-top: var(--s-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-5);
+}
+
+/* =====================  SCHEDULE  ===================== */
+
+.schedule { margin: 0; }
+
+.schedule-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-5);
+  background: var(--stock-band);
+  border-block: 1px solid var(--rule-strong);
+}
+
+.schedule-title {
+  font-family: var(--f-data);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* Column heads sit on their own ruled line, as on the pad. */
+.cols {
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-2) var(--s-5);
+  border-bottom: 1px solid var(--rule);
+}
+
+.cols > * {
+  font-family: var(--f-data);
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Green-bar banding: the alternating stripe that gives the stock its name. */
+.row {
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+}
+.row:nth-child(even) { background: var(--stock-band); }
+
+.money { text-align: right; }
+
+/* =====================  PENCIL MARKS  ===================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mark { display: inline-block; vertical-align: -0.15em; }
+.mark path, .mark circle, .mark line { vector-effect: non-scaling-stroke; }
+
+.mark--red  { color: var(--red); }
+.mark--blue { color: var(--blue); }
+
+/* The single authored motion: the tick legend draws itself once, teaching the
+   reader what the marks mean. Every other mark on the site is static state.
+
+   Pure CSS, and deliberately so. The resting state is a fully drawn mark, so a
+   mark can never be left invisible by an observer that did not fire or a script
+   that did not run — the animation only replays the drawing of a stroke that is
+   already there. */
+@keyframes draw-on {
+  from { stroke-dashoffset: var(--len, 60); }
+  to   { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .draw path,
+  .draw line,
+  .draw circle {
+    stroke-dasharray: var(--len, 60);
+    animation: draw-on 0.6s var(--ease) var(--delay, 0s) both;
+  }
+}
+
+/* =====================  FIGURE + PROVENANCE  ===================== */
+
+/* A measured figure that carries its source. Hover or focus raises the tick
+   and names the source in the margin — the audit trail, made literal. */
+.figure {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1px;
+  transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+
+.figure:hover, .figure:focus-visible {
+  border-bottom-color: var(--red);
+  background: var(--red-wash);
+}
+
+.figure .mark { opacity: 0.55; transition: opacity 0.2s var(--ease), transform 0.2s var(--ease); }
+.figure:hover .mark, .figure:focus-visible .mark {
+  opacity: 1;
+  transform: scale(1.15) rotate(-4deg);
+}
+
+.figure-value { font-weight: 600; }
+
+.provenance {
+  display: block;
+  font-family: var(--f-data);
+  font-size: var(--t-xs);
+  color: var(--ink-faint);
+  letter-spacing: 0.02em;
+  margin-top: var(--s-1);
+}
+
+/* =====================  CHIPS  =====================
+   The stack, the coursework, the interests — set as small ruled tags. */
+
+.chips { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+
+.chip {
+  font-family: var(--f-data);
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+  border: 1px solid var(--rule);
+  padding: 1px var(--s-2);
+  background: var(--stock);
+}
+.chip--tool { color: var(--ink-faint); }
+
+/* =====================  CROSS-REFERENCE  ===================== */
+
+/* Blue pencil. Every link between sheets is one of these. */
+.xref {
+  font-family: var(--f-data);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--blue);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  white-space: nowrap;
+  transition: border-color 0.18s var(--ease);
+}
+.xref:hover, .xref:focus-visible { border-bottom-color: var(--blue); }
+
+/* =====================  STAMP  ===================== */
+
+.stamp {
+  display: inline-block;
+  font-family: var(--f-text);
+  font-size: var(--t-xs);
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--red);
+  border: 2px solid var(--red);
+  padding: var(--s-1) var(--s-3);
+  border-radius: 2px;
+  transform: rotate(-2.2deg);
+  opacity: 0.82;
+  mix-blend-mode: multiply;
+}
+.stamp--blue { color: var(--blue); border-color: var(--blue); }
+.stamp--muted { color: var(--ink-faint); border-color: var(--rule-strong); }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .stamp { mix-blend-mode: screen; }
+}
+:root[data-theme='dark'] .stamp { mix-blend-mode: screen; }
+
+/* =====================  DISCLOSURE NOTE  ===================== */
+
+/* Where the numbers do not fully behave. Load-bearing, never buried. */
+.note {
+  padding: var(--s-5);
+  background: var(--stock-band);
+  border-top: 1px solid var(--rule-strong);
+}
+
+.note-body {
+  max-width: var(--measure);
+  color: var(--ink-muted);
+  font-size: var(--t-sm);
+  line-height: 1.65;
+}
+
+/* =====================  PROSE  ===================== */
+
+/* `ch` resolves against the element's own font-size, so a measure set on a
+   container sized 1rem gives ~86 characters to text rendered at 0.8125rem.
+   Every prose container therefore declares the size its text is set at. */
+.prose { max-width: var(--measure); }
+.prose p + p { margin-top: var(--s-4); }
+.prose-sm { font-size: var(--t-sm); max-width: 70ch; }
+.prose a { color: var(--blue); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+
+/* =====================  RESPONSIVE  ===================== */
+
+@media (max-width: 720px) {
+  :root { --sheet: min(1120px, 100% - 1.5rem); }
+  .engagement { grid-template-columns: 1fr; padding: var(--s-6) var(--s-4) var(--s-4); }
+  .schedule-head, .cols, .row, .note { padding-inline: var(--s-4); }
+}

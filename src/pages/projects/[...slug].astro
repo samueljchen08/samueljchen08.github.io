@@ -1,0 +1,365 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Sheet from '../../components/Sheet.astro';
+import Mark from '../../components/Mark.astro';
+import Figure from '../../components/Figure.astro';
+import CrossRef from '../../components/CrossRef.astro';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).sort(
+    (a, b) => a.data.order - b.data.order
+  );
+
+  return projects.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      prev: projects[i - 1] ?? null,
+      next: projects[i + 1] ?? null,
+    },
+  }));
+}
+
+const { entry, prev, next } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+---
+
+<Base title={`${d.title} — ${d.index} — Samuel Chen`} description={d.answer}>
+  <main id="main">
+    <Sheet index={d.index} caption={`${d.title} — supporting schedule`}>
+      <header class="head">
+        <div class="head-nav">
+          <CrossRef to="/#work" index="A-1" label="Schedule A" back />
+        </div>
+
+        <h1 class="head-title">{d.title}</h1>
+        <p class="head-question">{d.question}</p>
+        <p class="head-answer">{d.answer}</p>
+
+        <div class="head-measured">
+          <span class="label">Headline measurement</span>
+          <Figure value={d.measured.value} source={d.measured.source} href={d.measured.href} />
+          <span class="provenance">{d.measured.source}</span>
+        </div>
+      </header>
+
+      <hr class="rule-heavy" />
+
+      {/* The sheet proper, with the auditor's margin down the right-hand side. */}
+      <div class="sheet-cols">
+        <div class="sheet-main sheet-prose">
+          <Content />
+        </div>
+
+        <aside class="margin" aria-label="Sheet particulars">
+          <div class="margin-inner">
+            <div class="margin-block">
+              <p class="label margin-title">Sheet</p>
+              <dl class="margin-facts">
+                <div><dt>Index</dt><dd class="index">{d.index}</dd></div>
+                <div><dt>Period</dt><dd class="num">{d.period}</dd></div>
+              </dl>
+            </div>
+
+            <div class="margin-block">
+              <p class="label margin-title">Source</p>
+              <ul class="margin-links">
+                <li>
+                  <a href={d.repo} target="_blank" rel="noopener noreferrer">Repository</a>
+                </li>
+                {d.live && (
+                  <li>
+                    <a href={d.live} target="_blank" rel="noopener noreferrer">Live report</a>
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            <div class="margin-block">
+              <p class="label margin-title">Built with</p>
+              <ul class="chips">
+                {d.stack.map((s) => <li class="chip">{s}</li>)}
+              </ul>
+            </div>
+
+            <div class="margin-block margin-note">
+              <div class="margin-note-head">
+                <Mark kind="notCleared" size={15} color="blue" />
+                <h2 class="label margin-title margin-title--note">What is not done</h2>
+              </div>
+              <p class="margin-note-body">{d.disclosure}</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <nav class="sheet-nav" aria-label="Adjacent sheets">
+        <div>
+          {prev && <CrossRef to={`/projects/${prev.id}/`} index={prev.data.index} label={prev.data.title} back />}
+        </div>
+        <div class="sheet-nav-end">
+          {next && <CrossRef to={`/projects/${next.id}/`} index={next.data.index} label={next.data.title} />}
+        </div>
+      </nav>
+    </Sheet>
+  </main>
+</Base>
+
+<style>
+  .head { padding: var(--s-6) var(--s-5) var(--s-5); }
+  .head-nav { margin-bottom: var(--s-5); }
+
+  .head-title {
+    font-size: var(--t-2xl);
+    letter-spacing: -0.04em;
+    font-weight: 800;
+  }
+
+  .head-question {
+    margin-top: var(--s-3);
+    font-family: var(--f-data);
+    font-size: var(--t-sm);
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    max-width: 58ch;
+  }
+
+  .head-answer {
+    margin-top: var(--s-4);
+    font-size: var(--t-md);
+    line-height: 1.55;
+    max-width: 54ch;
+    color: var(--ink);
+  }
+
+  .head-measured {
+    display: grid;
+    gap: var(--s-2);
+    justify-items: start;
+    margin-top: var(--s-5);
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--rule);
+  }
+  .head-measured .figure-value { font-size: var(--t-xl); }
+  .head-measured .provenance { margin-top: 0; }
+
+  /* ---- the sheet and its margin ---- */
+  .sheet-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 17rem;
+    align-items: start;
+  }
+
+  .sheet-main { padding: var(--s-6) var(--s-5) var(--s-7); min-width: 0; }
+
+  .margin {
+    border-left: 1px solid var(--rule);
+    background: var(--stock-band);
+    align-self: stretch;
+  }
+
+  .margin-inner {
+    position: sticky;
+    top: 0;
+    padding: var(--s-6) var(--s-4) var(--s-6) var(--s-5);
+    display: grid;
+    gap: var(--s-5);
+  }
+
+  .margin-title { margin: 0 0 var(--s-2); }
+  .margin-title--note { text-transform: uppercase; }
+
+  .margin-facts { margin: 0; display: grid; gap: var(--s-2); }
+  .margin-facts > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-3);
+    align-items: baseline;
+  }
+  .margin-facts dt {
+    margin: 0;
+    font-size: var(--t-xs);
+    color: var(--ink-faint);
+  }
+  .margin-facts dd { margin: 0; font-size: var(--t-sm); }
+
+  .margin-links { display: grid; gap: var(--s-2); }
+  .margin-links a {
+    font-family: var(--f-data);
+    font-size: var(--t-sm);
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  .margin-links a:hover, .margin-links a:focus-visible { border-bottom-color: var(--blue); }
+
+
+  .margin-note { border-top: 1px solid var(--rule-strong); padding-top: var(--s-4); }
+  .margin-note-head { display: flex; align-items: center; gap: var(--s-2); }
+  .margin-note-head .margin-title { margin: 0; }
+  .margin-note-body {
+    margin-top: var(--s-3);
+    font-size: var(--t-xs);
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+
+  .sheet-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding: var(--s-5);
+    border-top: 1px solid var(--rule-strong);
+    background: var(--stock-band);
+  }
+  .sheet-nav-end { text-align: right; }
+
+  @media (max-width: 1000px) {
+    .sheet-cols { grid-template-columns: 1fr; }
+    .margin {
+      border-left: 0;
+      border-top: 1px solid var(--rule-strong);
+    }
+    .margin-inner {
+      position: static;
+      padding: var(--s-5);
+      grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+      gap: var(--s-5) var(--s-6);
+    }
+    .margin-note { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 720px) {
+    .head, .sheet-main, .sheet-nav, .margin-inner { padding-inline: var(--s-4); }
+    .sheet-nav { flex-direction: column; gap: var(--s-3); }
+    .sheet-nav-end { text-align: left; }
+  }
+</style>
+
+<style is:global>
+  /* ==========================================================================
+     MDX output, set in the workpaper world. Tables are the point here: they
+     are the same ruled, green-banded schedules the rest of the site uses.
+     ========================================================================== */
+
+  .sheet-prose > * { max-width: 62ch; }
+
+  .sheet-prose > p {
+    margin: 0 0 var(--s-4);
+    line-height: 1.65;
+    color: var(--ink-muted);
+  }
+
+  .sheet-prose > p strong { color: var(--ink); font-weight: 600; }
+
+  .sheet-prose h2 {
+    margin: var(--s-7) 0 var(--s-4);
+    font-size: var(--t-xl);
+    letter-spacing: -0.03em;
+    padding-bottom: var(--s-2);
+    border-bottom: 2px solid var(--rule-strong);
+    max-width: none;
+  }
+
+  .sheet-prose h3 {
+    margin: var(--s-6) 0 var(--s-3);
+    font-size: var(--t-md);
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .sheet-prose h2:first-child, .sheet-prose h3:first-child { margin-top: 0; }
+
+  .sheet-prose code {
+    font-family: var(--f-data);
+    font-size: 0.9em;
+    background: var(--stock-band);
+    border: 1px solid var(--rule);
+    padding: 0 0.3em;
+    border-radius: 2px;
+  }
+
+  .sheet-prose a { color: var(--blue); text-underline-offset: 3px; }
+
+  .sheet-prose ul {
+    margin: 0 0 var(--s-4);
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--s-2);
+  }
+  .sheet-prose ul li {
+    position: relative;
+    padding-left: var(--s-4);
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+  .sheet-prose ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 6px;
+    height: 1px;
+    background: var(--rule-strong);
+  }
+
+  /* ---- tables as schedules: wider than the prose measure, by design ---- */
+  .sheet-prose table {
+    width: 100%;
+    max-width: none;
+    border-collapse: collapse;
+    margin: var(--s-5) 0 var(--s-6);
+    font-size: var(--t-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sheet-prose thead th {
+    font-family: var(--f-data);
+    font-size: var(--t-xs);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-align: left;
+    padding: var(--s-2) var(--s-3);
+    border-bottom: 1px solid var(--rule-strong);
+    white-space: nowrap;
+  }
+
+  .sheet-prose tbody td {
+    padding: var(--s-3);
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-muted);
+    vertical-align: top;
+  }
+
+  .sheet-prose tbody tr:nth-child(even) { background: var(--stock-band); }
+
+  .sheet-prose tbody td:first-child { color: var(--ink); }
+  .sheet-prose tbody td strong { color: var(--ink); font-weight: 600; }
+
+  /* Numeric columns: everything after the first, set in the data face. */
+  .sheet-prose tbody td:not(:first-child) {
+    font-family: var(--f-data);
+    font-variant-numeric: tabular-nums;
+  }
+  .sheet-prose thead th:not(:first-child),
+  .sheet-prose tbody td:not(:first-child) { text-align: right; }
+
+  /* Wide tables scroll inside their own container; the page never does. */
+  .sheet-prose .table-wrap {
+    max-width: none;
+    overflow-x: auto;
+    margin: var(--s-5) 0 var(--s-6);
+  }
+  .sheet-prose .table-wrap table { margin: 0; }
+
+  @media (max-width: 720px) {
+    .sheet-prose table { font-size: var(--t-xs); }
+    .sheet-prose thead th, .sheet-prose tbody td { padding: var(--s-2); }
+  }
+</style>

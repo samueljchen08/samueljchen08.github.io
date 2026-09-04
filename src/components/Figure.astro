@@ -1,0 +1,35 @@
+---
+import Mark from './Mark.astro';
+
+/**
+ * A measured figure that carries its provenance. This is the site's signature
+ * mechanic: hovering or focusing the figure raises its tick mark and names the
+ * source it was agreed to. It is a real link to that source, so the audit
+ * trail works with the keyboard and survives with JavaScript off.
+ */
+interface Props {
+  /** The measurement itself, transcribed exactly. Never rounded. */
+  value: string;
+  /** Where it came from, in the source's own terms. */
+  source: string;
+  href: string;
+  kind?: 'agreed' | 'notCleared' | 'note';
+  class?: string;
+}
+
+const { value, source, href, kind = 'agreed', class: className = '' } = Astro.props;
+---
+
+<a
+  class:list={['figure', className]}
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <span class="figure-value num">{value}</span>
+  <Mark kind={kind} size={14} />
+  {/* The THESIS rests on this link naming its source, so the source travels
+      in the accessible name rather than in a title attribute that assistive
+      tech may never announce and a touch device never reveals. */}
+  <span class="sr-only">— agreed to source: {source}</span>
+</a>

@@ -1,0 +1,67 @@
+---
+/**
+ * The auditor's pencil marks. Authored SVG, one stroke weight, drawn with the
+ * slight irregularity of a wax pencil — never a unicode glyph standing in for
+ * an icon.
+ *
+ *   agreed      the figure was traced to its source and matched
+ *   notCleared  work stated but deliberately not done
+ *   note        see the disclosure note
+ */
+type Kind = 'agreed' | 'notCleared' | 'note';
+
+interface Props {
+  kind?: Kind;
+  size?: number;
+  color?: 'red' | 'blue';
+  /** Stagger for the draw-on animation. */
+  delay?: number;
+  class?: string;
+  title?: string;
+}
+
+const {
+  kind = 'agreed',
+  size = 16,
+  color = 'red',
+  delay = 0,
+  class: className = '',
+  title,
+} = Astro.props;
+
+// Rough path lengths, used as the dash length for the draw-on transition.
+const LEN: Record<Kind, number> = { agreed: 26, notCleared: 54, note: 40 };
+---
+
+<svg
+  class:list={['mark', `mark--${color}`, className]}
+  width={size}
+  height={size}
+  viewBox="0 0 18 18"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden={title ? undefined : 'true'}
+  role={title ? 'img' : undefined}
+  style={`--len:${LEN[kind]};--delay:${delay}ms`}
+>
+  {title && <title>{title}</title>}
+  {kind === 'agreed' && (
+    <path d="M3 9.4c1.5 1.3 2.7 3.1 3.7 5C8.8 10 11.6 5.5 15.3 2.6" />
+  )}
+  {kind === 'notCleared' && (
+    <>
+      <circle cx="9" cy="9" r="6.3" />
+      <path d="M4.6 13.4 13.4 4.6" />
+    </>
+  )}
+  {kind === 'note' && (
+    <>
+      <path d="M9 2.8v12.4" />
+      <path d="M3.8 5.8 14.2 12.2" />
+      <path d="M14.2 5.8 3.8 12.2" />
+    </>
+  )}
+</svg>
