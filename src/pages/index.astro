@@ -2,19 +2,13 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
-import ProjectEntry from '../components/ProjectEntry.astro';
-import Timeline from '../components/Timeline.astro';
+import Carousel from '../components/Carousel.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ExperienceCard from '../components/ExperienceCard.astro';
 import Tags from '../components/Tags.astro';
 import { person, education, roles, activities, skills, interests } from '../data/profile';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-
-const experience = roles.map((r) => ({
-  dates: `${r.start} – ${r.end}`,
-  heading: r.company,
-  sub: `${r.title} · ${r.location}`,
-  bullets: r.bullets.slice(0, 2),
-}));
 
 const description =
   "Samuel Chen — MIT Computer Science (AI) '27. Projects in agentic RL environments, causal experiments on AI buyer agents, and sports tracking; experience at Nexus AI, Goldman Sachs, Barings, and Cercano.";
@@ -37,12 +31,16 @@ const locations = person.locations.join(' / ');
       </div>
     </section>
 
-    <Section id="work" label="selected work">
-      {projects.map((p) => <ProjectEntry project={p} />)}
+    <Section id="projects" label="projects">
+      <Carousel label="projects">
+        {projects.map((p) => <li><ProjectCard project={p} /></li>)}
+      </Carousel>
     </Section>
 
     <Section id="experience" label="experience">
-      <Timeline items={experience} />
+      <Carousel label="roles">
+        {roles.map((r) => <li><ExperienceCard role={r} /></li>)}
+      </Carousel>
     </Section>
 
     <Section id="education" label="education & skills">

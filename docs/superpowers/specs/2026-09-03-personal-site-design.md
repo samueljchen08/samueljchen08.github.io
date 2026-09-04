@@ -27,7 +27,7 @@ Routes:
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Hero, selected work, experience, education & skills, activities, footer |
+| `/` | Hero, projects, experience, education & skills, activities, footer |
 | `/projects/opsgym/` | Long-form project page |
 | `/projects/agentic-commerce-lab/` | Long-form project page |
 | `/projects/multi-object-tracking/` | Long-form project page |
@@ -91,14 +91,19 @@ github`. Links stay inline on mobile; no hamburger.
 1. **Hero.** `Samuel Chen` (large). Below it a mono meta line
    `MIT CS-AI '27 · Cambridge, MA / Bellevue, WA` ending in the block cursor. Then three
    actions: `résumé (pdf) · github · email`. **No tagline or descriptive sentence.**
-2. **Selected work** (`// selected work`). Three full-width entries, in `order`:
-   title · the one-sentence question the project answers · headline figure with mono
-   caption · stack tags · links `read →`, `repo`, `live report` (where present).
-   Headline figures: opsgym `22.5 pts`; agentic-commerce-lab `−$188,718`;
-   multi-object-tracking `0.219 ft`.
-3. **Experience** (`// experience`). Timeline rows: mono date range left; company,
-   title, location, 1–2 bullets right. Order: Nexus AI (Co-Founder) → Goldman Sachs FIG →
-   Barings → Cercano → MIT Sloan research.
+2. **Projects** (`// projects`, `id="projects"`). The three projects as cards in a
+   **circular carousel**: two cards per view on desktop, one below 768px, chevron
+   arrows either side, and no end in either direction — next on the last card brings
+   the first round again. Each card carries title · the one-sentence question · stack
+   tags · links `read →`, `repo →`, `live report →` (where present). **No headline
+   figure on the card** — the measured numbers live on the project page's result
+   strip, where their captions and sources sit with them. The whole card is a
+   stretched link to the repository; hovering or focusing it lights an accent frame
+   and bloom around the card.
+3. **Experience** (`// experience`). The five roles as cards in the same circular
+   carousel: accent date range, company, title · location, first two bullets. Order:
+   Nexus AI (Co-Founder) → Goldman Sachs FIG → Barings → Cercano → MIT Sloan research.
+   The cards are not links, so they do not take the projects' hover light.
 4. **Education & skills.** MIT, BS CS-AI, minor in Finance, GPA 4.95/5.0, exp. May 2027;
    coursework as wrapped tags; technical skills as tags.
 5. **Off the keyboard.** A list of activities with roles (not a paragraph): MIT Varsity
@@ -150,8 +155,8 @@ limits: string
 Body: MDX prose. Adding a project = one file; it appears on the homepage automatically.
 
 **Components** (`src/components/`): `Nav`, `Footer`, `Section` (label + slot),
-`ProjectEntry`, `Timeline` + `TimelineRow`, `Tags`, `ResultStrip`, `Callout`, `Toc`,
-`ThemeToggle`. Layouts: `Base.astro` (head/meta/OG, fonts, theme script, nav, footer).
+`Carousel`, `ProjectCard`, `ExperienceCard`, `Tags`, `ResultStrip`, `Callout`, `Toc`,
+`Spotlight`. Layouts: `Base.astro` (head/meta/OG, fonts, nav, footer, reveal script).
 Styles: `src/styles/tokens.css`, `src/styles/global.css` (reset, typography, tables,
 print).
 

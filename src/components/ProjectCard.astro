@@ -1,0 +1,96 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Tags from './Tags.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, question, stack, repo, live } = project.data;
+const readHref = `/projects/${project.id}/`;
+---
+
+<article class="card">
+  <h3>{title}</h3>
+  <p class="question">{question}</p>
+  <Tags items={stack} />
+  <ul class="links">
+    <li><a href={readHref}>read →</a></li>
+    <li>
+      {/* Stays static so its ::after resolves against the card and covers it. */}
+      <a class="stretched" href={repo} target="_blank" rel="noopener noreferrer">repo →</a>
+    </li>
+    {live && (
+      <li><a href={live} target="_blank" rel="noopener noreferrer">live report →</a></li>
+    )}
+  </ul>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-raised);
+    transition:
+      border-color var(--dur) ease,
+      box-shadow var(--dur) ease;
+  }
+
+  /* The card lights up as one object — the whole surface is the repo link. */
+  .card:hover,
+  .card:focus-within {
+    border-color: var(--accent);
+    box-shadow:
+      0 0 0 1px var(--accent),
+      0 14px 48px -16px color-mix(in srgb, var(--accent) 60%, transparent),
+      0 0 28px -6px color-mix(in srgb, var(--accent) 32%, transparent);
+  }
+
+  h3 {
+    font-size: 1.35rem;
+    margin-bottom: var(--space-1);
+  }
+  .question {
+    color: var(--fg-muted);
+    margin-bottom: var(--space-2);
+    max-width: none;
+  }
+
+  .links {
+    list-style: none;
+    padding: 0;
+    /* Pinned to the bottom so links line up across cards of unequal text length. */
+    margin: auto 0 0;
+    padding-top: var(--space-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    max-width: none;
+  }
+  .links li { margin: 0; }
+
+  /* Every link except the stretched one has to sit above its overlay to stay clickable. */
+  .links a:not(.stretched) {
+    position: relative;
+    z-index: 1;
+  }
+  .stretched::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+  }
+
+  @media (max-width: 767px) {
+    .card { padding: var(--space-2); }
+    h3 { font-size: 1.2rem; }
+  }
+</style>

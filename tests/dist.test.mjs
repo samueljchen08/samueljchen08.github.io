@@ -12,7 +12,7 @@ test('homepage builds with nav and meta, and ships one palette', () => {
   assert.match(page, /<title>Samuel Chen<\/title>/);
   assert.match(page, /<meta property="og:title"/);
   assert.match(page, /<link rel="canonical" href="https:\/\/samueljchen08\.github\.io\/"/);
-  for (const href of ['/#work', '/#experience', '/resume/', 'https://github.com/samueljchen08']) {
+  for (const href of ['/#projects', '/#experience', '/resume/', 'https://github.com/samueljchen08']) {
     assert.ok(page.includes(`href="${href}"`), `nav links to ${href}`);
   }
   assert.doesNotMatch(page, /aria-label="Toggle theme"/, 'the site ships one palette — no theme switch');
@@ -71,13 +71,20 @@ test('homepage: hero has meta line and three actions, no tagline', () => {
   assert.doesNotMatch(page, /measurement machinery/);
 });
 
-test('homepage: three projects in order with headline figures', () => {
+test('homepage: projects carousel, in order and without the stat column', () => {
   const page = html('index.html');
   const i1 = page.indexOf('href="/projects/opsgym/"');
   const i2 = page.indexOf('href="/projects/agentic-commerce-lab/"');
   const i3 = page.indexOf('href="/projects/multi-object-tracking/"');
   assert.ok(i1 > -1 && i2 > i1 && i3 > i2, 'projects appear in order');
-  for (const fig of ['22.5 pts', '−$188,718', '0.219 ft']) assert.ok(page.includes(fig), fig);
+  for (const fig of ['22.5 pts', '−$188,718', '0.219 ft']) {
+    assert.ok(!page.includes(fig), `${fig} belongs to the project page, not the card`);
+  }
+  assert.match(page, /aria-label="Next projects"/, 'projects carousel has controls');
+  assert.match(page, /aria-label="Next roles"/, 'experience carousel has controls');
+  // Every card links to its repo, and the arrow after `repo` separates it from the report.
+  assert.ok(page.includes('repo →'), 'repo link carries an arrow');
+  assert.ok(page.includes('live report →'), 'live report link carries an arrow');
 });
 
 test('homepage: experience, education, activities sections', () => {

@@ -1,0 +1,56 @@
+---
+import type { Role } from '../data/profile';
+
+interface Props {
+  role: Role;
+}
+
+const { role } = Astro.props;
+---
+
+<article class="card">
+  <p class="dates">{role.start} – {role.end}</p>
+  <h3>{role.company}</h3>
+  <p class="title">{role.title} · {role.location}</p>
+  <ul class="bullets">
+    {role.bullets.slice(0, 2).map((bullet) => <li>{bullet}</li>)}
+  </ul>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-raised);
+  }
+
+  .dates {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin: 0 0 var(--space-1);
+  }
+  h3 {
+    font-size: 1.2rem;
+  }
+  .title {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--fg-muted);
+    margin: 4px 0 var(--space-2);
+    max-width: none;
+  }
+  .bullets {
+    margin: 0;
+    font-size: 0.95rem;
+    max-width: none;
+  }
+
+  @media (max-width: 767px) {
+    .card { padding: var(--space-2); }
+  }
+</style>

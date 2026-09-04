@@ -3,7 +3,7 @@ import { person } from '../data/profile';
 
 const path = Astro.url.pathname;
 const links = [
-  { href: '/#work', label: 'projects', current: path.startsWith('/projects/') },
+  { href: '/#projects', label: 'projects', current: path.startsWith('/projects/') },
   { href: '/#experience', label: 'experience', current: false },
   { href: '/resume/', label: 'résumé', current: path === '/resume/' },
   { href: person.github, label: 'github', external: true, current: false },
