@@ -28,7 +28,9 @@ const technical = await technicalSkills();
           <span class="mono muted">{education.location} · expected {education.expected}</span>
         </div>
         <p>{education.degree}; {education.minor}. GPA {education.gpa}.</p>
-        <p class="small"><strong>Coursework:</strong> {education.coursework.join(', ')}</p>
+        {education.coursework.map((group) => (
+          <p class="small"><strong>{group.name}:</strong> {group.courses.join(', ')}</p>
+        ))}
       </div>
     </section>
 
@@ -62,7 +64,9 @@ const technical = await technicalSkills();
 
     <section>
       <h2 class="label">skills & interests</h2>
-      <p><strong>Technical:</strong> {technical.join(', ')}</p>
+      {technical.map((group) => (
+        <p class="small"><strong>{group.name}:</strong> {group.skills.join(', ')}</p>
+      ))}
       <p><strong>Interests:</strong> {interests.map((i) => i.label).join(', ')}</p>
     </section>
   </main>

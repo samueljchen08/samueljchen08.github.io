@@ -14,7 +14,17 @@ test('person has every public contact channel', () => {
 test('education matches the résumé PDF', () => {
   assert.equal(education.gpa, '4.95/5.0');
   assert.equal(education.expected, 'May 2027');
-  assert.ok(education.coursework.includes('Natural Language Processing'));
+  const sectors = education.coursework.map((g) => g.name);
+  assert.deepEqual(sectors, [
+    'Computer Science — Artificial Intelligence',
+    'Finance',
+    'General Institute Requirements',
+    'Humanities',
+  ]);
+  const ai = education.coursework[0].courses;
+  assert.equal(ai[0], 'Natural Language Processing', 'the AI sector leads with NLP');
+  const all = education.coursework.flatMap((g) => g.courses);
+  assert.equal(new Set(all).size, all.length, 'no course is listed twice');
 });
 
 test('roles are in site order with a track on each', () => {

@@ -50,9 +50,19 @@ const locations = person.locations.join(' / ');
         <p class="mono muted">{education.degree} · {education.minor}</p>
         <p class="mono muted">GPA {education.gpa} · expected {education.expected} · {education.location}</p>
         <h4 class="sub-label">coursework</h4>
-        <Tags items={education.coursework} />
+        {education.coursework.map((group) => (
+          <div class="course-group">
+            <p class="group-name">{group.name}</p>
+            <Tags items={group.courses} />
+          </div>
+        ))}
         <h4 class="sub-label">technical</h4>
-        <Tags items={technical} />
+        {technical.map((group) => (
+          <div class="course-group">
+            <p class="group-name">{group.name}</p>
+            <Tags items={group.skills} />
+          </div>
+        ))}
       </div>
     </Section>
 
@@ -105,6 +115,15 @@ const locations = person.locations.join(' / ');
   .muted { color: var(--fg-muted); margin: 0 0 6px; }
   .edu h3 { margin-bottom: 6px; }
   .sub-label { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; color: var(--fg-muted); margin: var(--space-3) 0 var(--space-1); }
+  /* Coursework is grouped by sector; the sector name is the accent line above its chips. */
+  .course-group + .course-group { margin-top: var(--space-2); }
+  .group-name {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin: 0 0 6px;
+    max-width: none;
+  }
   /* Name and title only — no dates column, no bullets. */
   .activities { list-style: none; padding: 0; margin: 0; max-width: none; }
   .activities li { margin: 0; padding: var(--space-2) 0; border-top: 1px solid var(--border); }
