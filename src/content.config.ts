@@ -13,6 +13,7 @@ const projects = defineCollection({
     period: z.string(),
     repo: z.string().url(),
     live: z.string().url().optional(),
+    paper: z.string().url().optional(),
     stack: z.array(z.string()).min(1),
     headline: figure,
     results: z.array(figure).min(3).max(4),

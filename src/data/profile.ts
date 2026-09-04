@@ -100,7 +100,7 @@ export const roles: Role[] = [
     mark: 'GS',
     logo: '/logos/goldman-sachs.jpg',
     bullets: [
-      'Supported 8 M&A and coverage teams across Financial Institutions with valuation and transaction analysis.',
+      'Supported eight M&A and coverage teams across Financial Institutions with valuation and transaction analysis.',
       'Contributed to the buy-side advisory on the ~$5.5B acquisition of Steadfast Group.',
     ],
   },
@@ -114,7 +114,7 @@ export const roles: Role[] = [
     mark: 'B',
     logo: '/logos/barings.jpg',
     bullets: [
-      'Led memo drafting for 4 debt and equity investments, building the cash-flow and returns analysis behind each.',
+      'Led memo drafting for four debt and equity investments, building the cash-flow and returns analysis behind each.',
       'Pitched an exit strategy for a ~$50M oil and gas investment using a dynamic DCF and sum-of-the-parts model.',
     ],
   },
@@ -128,7 +128,7 @@ export const roles: Role[] = [
     mark: 'CM',
     logo: '/logos/cercano.jpg',
     bullets: [
-      'Engineered 7 Python tools automating trading research and backtesting, from benchmark tracking to rolling correlations.',
+      'Engineered seven Python tools automating trading research and backtesting, from benchmark tracking to rolling correlations.',
       'Screened 3,000+ companies on FCF margin, EPS growth and ROIC for a $10B+ fund.',
     ],
   },
@@ -142,7 +142,7 @@ export const roles: Role[] = [
     mark: 'MIT',
     logo: '/logos/mit-sloan.jpg',
     bullets: [
-      'Coded 5 Monte Carlo season simulators in Python measuring dominance and competitive balance across major team sports.',
+      'Coded five Monte Carlo season simulators in Python measuring dominance and competitive balance across major team sports.',
       'Analyzed 15+ sports to test how durable dominance relates to competitiveness.',
     ],
   },

@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 
 const { project, prev, next } = Astro.props;
 const { Content, headings } = await render(project);
-const { title, question, period, repo, live, stack, results, limits } = project.data;
+const { title, question, period, repo, live, paper, stack, results, limits } = project.data;
 ---
 
 <Base title={`${title} — Samuel Chen`} description={question}>
@@ -33,6 +33,12 @@ const { title, question, period, repo, live, stack, results, limits } = project.
             <li>
               <span class="sep" aria-hidden="true">→</span>
               <a href={live} target="_blank" rel="noopener noreferrer">live report</a>
+            </li>
+          )}
+          {paper && (
+            <li>
+              <span class="sep" aria-hidden="true">→</span>
+              <a href={paper} target="_blank" rel="noopener noreferrer">paper</a>
             </li>
           )}
         </ul>

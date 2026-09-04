@@ -7,18 +7,24 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, question, stack, repo, live } = project.data;
+const { title, question, stack, repo, live, paper } = project.data;
 
 /**
- * The arrow is a separator, not a suffix: `read → repo → live report`, with nothing
- * trailing the last link. `repo` is the stretched one, so it must stay static for its
- * ::after to resolve against the card.
+ * The arrow is a separator, not a suffix: `read → repo → paper`, with nothing trailing
+ * the last link.
+ *
+ * One link is "stretched" — its ::after covers the whole card, so clicking anywhere
+ * that is not another link follows it. That is the paper where a project has one, and
+ * the repository otherwise. The stretched link must stay statically positioned for its
+ * ::after to resolve against the card rather than against itself.
  */
+const primary = paper ?? repo;
 const links = [
-  { href: `/projects/${project.id}/`, label: 'read', external: false, stretched: false },
-  { href: repo, label: 'repo', external: true, stretched: true },
-  ...(live ? [{ href: live, label: 'live report', external: true, stretched: false }] : []),
-];
+  { href: `/projects/${project.id}/`, label: 'read', external: false },
+  { href: repo, label: 'repo', external: true },
+  ...(live ? [{ href: live, label: 'live report', external: true }] : []),
+  ...(paper ? [{ href: paper, label: 'paper', external: true }] : []),
+].map((link) => ({ ...link, stretched: link.href === primary }));
 ---
 
 <article class="card">
