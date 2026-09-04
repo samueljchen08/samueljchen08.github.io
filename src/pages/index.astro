@@ -1,3 +1,12 @@
 ---
+import Base from '../layouts/Base.astro';
+import { person } from '../data/profile';
 ---
-<html lang="en"><head><meta charset="utf-8" /><title>Samuel Chen</title></head><body><main id="main">Samuel Chen</main></body></html>
+
+<Base title="Samuel Chen" description="Samuel Chen — MIT Computer Science (AI) '27. AI systems, and the measurement that decides whether they work.">
+  <main id="main">
+    <div class="container">
+      <h1>{person.name}</h1>
+    </div>
+  </main>
+</Base>

@@ -1,0 +1,50 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import { person } from '../data/profile';
+
+const path = Astro.url.pathname;
+const links = [
+  { href: '/#work', label: 'projects' },
+  { href: '/#experience', label: 'experience' },
+  { href: '/resume/', label: 'résumé' },
+  { href: person.github, label: 'github', external: true },
+];
+---
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="/">samuel chen</a>
+    <nav aria-label="Primary">
+      <ul>
+        {links.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              aria-current={path === l.href ? 'page' : undefined}
+              {...(l.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >{l.label}</a>
+          </li>
+        ))}
+      </ul>
+      <ThemeToggle />
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 52px; }
+  .brand, nav a { font-family: var(--font-mono); font-size: 0.85rem; color: var(--fg); }
+  .brand { font-weight: 600; }
+  nav { display: flex; align-items: center; gap: var(--space-2); }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--space-2); }
+  li { margin: 0; }
+  nav a { color: var(--fg-muted); transition: color var(--dur) ease; }
+  nav a:hover, nav a[aria-current='page'] { color: var(--fg); text-decoration: none; }
+  @media (max-width: 767px) { ul { gap: 12px; } nav a, .brand { font-size: 0.8rem; } }
+</style>
