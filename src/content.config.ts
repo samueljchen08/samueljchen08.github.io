@@ -1,0 +1,22 @@
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+
+const figure = z.object({ value: z.string(), caption: z.string() });
+
+const projects = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/projects' }),
+  schema: z.object({
+    title: z.string(),
+    order: z.number().int(),
+    question: z.string(),
+    period: z.string(),
+    repo: z.string().url(),
+    live: z.string().url().optional(),
+    stack: z.array(z.string()).min(1),
+    headline: figure,
+    results: z.array(figure).min(2).max(4),
+    limits: z.string(),
+  }),
+});
+
+export const collections = { projects };

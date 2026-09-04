@@ -29,3 +29,12 @@ test('robots and favicon ship', () => {
   assert.ok(existsSync(join(dist, 'favicon.svg')));
   assert.match(html('robots.txt'), /Sitemap: https:\/\/samueljchen08\.github\.io\/sitemap-index\.xml/);
 });
+
+test('opsgym project page builds with its headline figures', () => {
+  const page = html('projects/opsgym/index.html');
+  assert.match(page, /<title>opsgym — Samuel Chen<\/title>/);
+  assert.ok(page.includes('22.5'), 'noise floor figure present');
+  assert.ok(page.includes('0.450'), 'pass@1 present');
+  assert.ok(page.includes('https://github.com/samueljchen08/opsgym'));
+  assert.ok(page.includes('class="table-wrap"'), 'markdown tables are wrapped for horizontal scroll');
+});
