@@ -1,49 +1,67 @@
 ---
 /**
- * A faint accent-colored light that follows the cursor across the dark page.
+ * Two cursor effects sharing one component, because they are two states of one idea:
+ * light that follows the hand.
  *
- * It blends with `screen`, so it lifts the near-black ground without touching the
- * legibility of text above it (screen leaves white unchanged). It never appears for
- * touch pointers, reduced-motion visitors, or print.
+ * At rest, a small accent glow tracks the pointer. Press and drag and the glow gives
+ * way to a bright slash — a tapering streak drawn along the drag path that fades out
+ * behind it. Both blend with `screen`, so they lift the near-black ground without
+ * touching the contrast of text above them.
+ *
+ * Neither appears for touch pointers, reduced-motion visitors, or print.
  */
 ---
 
 <div class="spotlight" aria-hidden="true"></div>
+<canvas class="slash" aria-hidden="true"></canvas>
 
 <style>
-  .spotlight {
+  .spotlight,
+  .slash {
     position: fixed;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  .spotlight {
     top: 0;
     left: 0;
-    /* Centered on the cursor: half the box is pulled back in each axis. */
+    /* Centred on the cursor: half the box is pulled back in each axis. */
     width: var(--spotlight-size);
     height: var(--spotlight-size);
     margin: calc(var(--spotlight-size) / -2) 0 0 calc(var(--spotlight-size) / -2);
     z-index: 1;
-    pointer-events: none;
     opacity: 0;
     background: radial-gradient(
       circle closest-side,
-      color-mix(in srgb, var(--accent) 26%, transparent),
-      color-mix(in srgb, var(--accent) 9%, transparent) 45%,
+      color-mix(in srgb, var(--accent) 30%, transparent),
+      color-mix(in srgb, var(--accent) 10%, transparent) 45%,
       transparent 78%
     );
-    mix-blend-mode: screen;
     /* The lag is the authored part: the light trails the cursor and settles. */
     transition:
       transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
-      opacity 260ms ease;
+      opacity 200ms ease;
+  }
+
+  .slash {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
   }
 
   /* No cursor to follow, or motion the visitor has asked us not to make. */
   @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
-    .spotlight {
+    .spotlight,
+    .slash {
       display: none;
     }
   }
 
   @media print {
-    .spotlight {
+    .spotlight,
+    .slash {
       display: none;
     }
   }
@@ -51,20 +69,87 @@
 
 <script>
   const light = document.querySelector<HTMLElement>('.spotlight');
+  const canvas = document.querySelector<HTMLCanvasElement>('.slash');
   const wants =
     light &&
+    canvas &&
     window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
     !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (wants) {
+    const context = canvas.getContext('2d');
+
+    /** The slash is drawn from the same accent token the rest of the page uses. */
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    const rgb = (() => {
+      const hex = accent.replace('#', '');
+      const full = hex.length === 3 ? [...hex].map((c) => c + c).join('') : hex;
+      const n = Number.parseInt(full, 16);
+      return Number.isNaN(n) ? '139, 124, 255' : `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+    })();
+
+    /** How long a point on the trail stays lit, in milliseconds. */
+    const LIFETIME = 460;
+
+    let points: { x: number; y: number; t: number }[] = [];
+    let dragging = false;
+    let frame: number | null = null;
+    let queued = false;
     let x = 0;
     let y = 0;
-    let queued = false;
 
-    const paint = () => {
+    const resize = () => {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(window.innerWidth * ratio);
+      canvas.height = Math.floor(window.innerHeight * ratio);
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      context?.setTransform(ratio, 0, 0, ratio, 0, 0);
+    };
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    const render = () => {
+      frame = null;
+      if (!context) return;
+      const now = performance.now();
+      points = points.filter((p) => now - p.t < LIFETIME);
+      context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      if (points.length > 1) {
+        context.globalCompositeOperation = 'lighter';
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+        // Two passes: a wide bloom, then a bright core riding on top of it.
+        for (const pass of [0, 1]) {
+          for (let i = 1; i < points.length; i += 1) {
+            const from = points[i - 1];
+            const to = points[i];
+            // 1 at the head of the slash, 0 at its tail — drives both width and alpha.
+            const life = Math.max(0, 1 - (now - to.t) / LIFETIME);
+            context.beginPath();
+            context.moveTo(from.x, from.y);
+            context.lineTo(to.x, to.y);
+            context.strokeStyle =
+              pass === 0 ? `rgba(${rgb}, ${0.22 * life})` : `rgba(255, 255, 255, ${0.85 * life})`;
+            context.lineWidth = pass === 0 ? 26 * life : 2.8 * life;
+            context.stroke();
+          }
+        }
+        context.globalCompositeOperation = 'source-over';
+      }
+
+      if (points.length > 0) schedule();
+    };
+
+    const schedule = () => {
+      if (frame === null) frame = requestAnimationFrame(render);
+    };
+
+    const paintLight = () => {
       queued = false;
       light.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-      light.style.opacity = '1';
+      if (!dragging) light.style.opacity = '1';
     };
 
     window.addEventListener(
@@ -73,14 +158,34 @@
         if (event.pointerType !== 'mouse') return;
         x = event.clientX;
         y = event.clientY;
-        // Coalesce to one write per frame however fast the pointer moves.
+        if (dragging) {
+          points.push({ x, y, t: performance.now() });
+          schedule();
+        }
+        // Coalesce the glow to one write per frame however fast the pointer moves.
         if (!queued) {
           queued = true;
-          requestAnimationFrame(paint);
+          requestAnimationFrame(paintLight);
         }
       },
       { passive: true },
     );
+
+    window.addEventListener('pointerdown', (event) => {
+      if (event.pointerType !== 'mouse' || event.button !== 0) return;
+      dragging = true;
+      // The glow steps aside so the slash reads on its own.
+      light.style.opacity = '0';
+      points = [{ x: event.clientX, y: event.clientY, t: performance.now() }];
+    });
+
+    const release = () => {
+      dragging = false;
+      // The trail keeps fading on its own; the glow comes back with the next move.
+      light.style.opacity = '1';
+    };
+    window.addEventListener('pointerup', release);
+    window.addEventListener('pointercancel', release);
 
     // Fade out when the cursor leaves the window rather than stranding the light.
     document.addEventListener('mouseleave', () => {

@@ -69,11 +69,19 @@ labels, dates, tags, table numbers, nav, and meta lines. Both self-hosted via
 rules between sections. No glassmorphism, no shadows beyond a 1px border. Gradients are
 reserved for two authored lights: the hero's dot grid, and the cursor spotlight below.
 
-**Cursor spotlight.** One authored ambient effect: a soft accent-colored light of
-`--spotlight-size` (480px) follows the cursor, blended with `screen` so it lifts the
-near-black ground without altering the contrast of text above it. It trails the pointer
-by 180ms and settles. Dark mode only; hidden for coarse/absent pointers, under
-`prefers-reduced-motion`, and in print. Implemented in `components/Spotlight.astro`.
+**Cursor light.** One authored ambient effect in two states, both blended with `screen`
+so they lift the near-black ground without altering the contrast of text above them.
+
+*At rest:* a soft accent light of `--spotlight-size` (260px) follows the cursor, trailing
+it by 180ms and settling.
+
+*While dragging:* pressing the primary button hides the glow and draws a **slash** — a
+tapering streak along the drag path, a wide accent bloom under a bright white core, each
+point fading over 460ms so the head is brightest and the tail dissolves. Rendered to a
+`<canvas>` with additive compositing; the animation loop runs only while points are alive.
+
+Hidden for coarse or absent pointers, under `prefers-reduced-motion`, and in print.
+Implemented in `components/Spotlight.astro`.
 
 **Motion.** Hover state changes; a single `fade-up` on section entry; a blinking block
 cursor at the end of the hero meta line. All ≤ 200 ms; everything disabled under
