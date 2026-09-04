@@ -1,4 +1,5 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
 const figure = z.object({ value: z.string(), caption: z.string() });
@@ -14,7 +15,7 @@ const projects = defineCollection({
     live: z.string().url().optional(),
     stack: z.array(z.string()).min(1),
     headline: figure,
-    results: z.array(figure).min(2).max(4),
+    results: z.array(figure).min(3).max(4),
     limits: z.string(),
   }),
 });

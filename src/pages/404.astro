@@ -2,9 +2,9 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Not found — Samuel Chen" description="That page does not exist.">
+<Base title="Not found — Samuel Chen" description="That page does not exist." noindex={true}>
   <main id="main" class="container nf">
-    <p class="mono"><span class="accent">404</span> · page not found</p>
+    <h1 class="mono"><span class="accent">404</span> · page not found</h1>
     <p><a href="/">← back home</a></p>
   </main>
 </Base>
@@ -12,4 +12,5 @@ import Base from '../layouts/Base.astro';
 <style>
   .nf { padding: var(--space-6) var(--space-3); min-height: 50vh; }
   .accent { color: var(--accent); }
+  .nf h1 { font-size: 1rem; font-weight: 500; }
 </style>

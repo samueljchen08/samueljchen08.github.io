@@ -110,7 +110,7 @@ github` + theme toggle. Links stay inline on mobile; no hamburger.
 ### Résumé `/resume/`
 HTML rendering of `profile.ts` (contact, education, experience, leadership & activities,
 skills & interests) with a prominent `download pdf` button at the top. A print stylesheet
-yields a clean one-pager.
+yields a clean one-to-two-page document; the PDF download is the canonical one-page résumé.
 
 ## 5. Content architecture
 

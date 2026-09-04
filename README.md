@@ -10,6 +10,7 @@ Personal site for Samuel Chen — MIT Computer Science (AI), 2027.
     npm test             # build + build-output tests
     npm run check        # astro check
     npm run check-links  # verify every href in dist/
+    node scripts/screenshots.mjs  # needs the optional playwright devDependency + Google Chrome
 
 ## Content
 

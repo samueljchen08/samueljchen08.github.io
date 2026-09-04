@@ -102,12 +102,16 @@ test('resume page renders every role and the PDF button', () => {
   }
   assert.ok(page.includes('Recruited Collegiate Athlete (Point Guard)'));
   assert.ok(page.includes('Fantasy Football'));
+  assert.ok(page.includes('· <a'), 'contact separators keep their spaces');
+  assert.ok(!page.includes('·<a'), 'no collapsed separators');
 });
 
 test('404 page and sitemap exist', () => {
   const page = html('404.html');
   assert.ok(page.includes('href="/"'));
   assert.match(page, /not found/i);
+  assert.ok(page.includes('name="robots" content="noindex"'), '404 is noindex');
+  assert.ok(!page.includes('rel="canonical"'), '404 has no canonical link');
   const sm = html('sitemap-0.xml');
   for (const url of ['https://samueljchen08.github.io/', 'https://samueljchen08.github.io/resume/', 'https://samueljchen08.github.io/projects/opsgym/']) {
     assert.ok(sm.includes(`<loc>${url}</loc>`), url);

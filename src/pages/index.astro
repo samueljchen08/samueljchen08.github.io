@@ -25,6 +25,9 @@ const offKeyboard = activities.map((a) => ({
 
 const description =
   "Samuel Chen — MIT Computer Science (AI) '27. Projects in agentic RL environments, causal experiments on AI buyer agents, and sports tracking; experience at Nexus AI, Goldman Sachs, Barings, and Cercano.";
+
+const gradYear = education.expected.match(/\d{4}/)?.[0]?.slice(-2);
+const locations = person.locations.join(' / ');
 ---
 
 <Base title="Samuel Chen" description={description}>
@@ -32,7 +35,7 @@ const description =
     <section class="hero">
       <div class="container">
         <h1>{person.name}</h1>
-        <p class="meta mono">MIT CS-AI '27 · {person.locations[0]} / {person.locations[1]}<span class="cursor" aria-hidden="true"></span></p>
+        <p class="meta mono">MIT CS-AI '{gradYear} · {locations}<span class="cursor" aria-hidden="true"></span></p>
         <div class="actions">
           <a class="btn btn--primary" href={person.resumePdf}>résumé (pdf)</a>
           <a class="btn" href={person.github} target="_blank" rel="noopener noreferrer">github</a>

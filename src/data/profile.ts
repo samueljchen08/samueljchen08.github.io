@@ -136,8 +136,8 @@ export const activities: Activity[] = [
   { name: 'Sloan Business Club', role: 'Managing Director of Finance' },
   // USER-SUPPLIED title (2026-09-03); the résumé PDF lists the club without a title.
   { name: 'StartLabs', role: 'VP of External Relations' },
-  { name: 'Brass Rat Investments' },
   { name: 'Splash' },
+  { name: 'Brass Rat Investments' },
 ];
 
 export const skills = ['Python', 'HTML', 'CSS', 'JavaScript', 'Data Analysis', 'Modeling'];
