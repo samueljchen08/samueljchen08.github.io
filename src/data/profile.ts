@@ -156,8 +156,7 @@ export const activities: Activity[] = [
   },
   // USER-SUPPLIED title (2026-09-03); the résumé PDF lists the club without a title.
   { name: 'Sloan Business Club', role: 'Managing Director of Finance' },
-  // USER-SUPPLIED title (2026-09-03); the résumé PDF lists the club without a title.
-  { name: 'StartLabs', role: 'VP of External Relations' },
+  { name: 'StartLabs', role: 'VP of Corporate Relations' },
   { name: 'Splash' },
   { name: 'Brass Rat Investments', role: 'Tech Sector Analyst' },
 ];

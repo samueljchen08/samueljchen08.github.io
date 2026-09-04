@@ -67,7 +67,9 @@ test('homepage: hero has meta line and three actions, no tagline', () => {
   const page = html('index.html');
   assert.ok(page.includes("MIT CS-AI '27 · Cambridge, MA / Bellevue, WA"));
   assert.ok(page.includes('href="/samuel-chen-resume.pdf"'));
-  assert.ok(page.includes('href="#contact"'), 'the third hero action goes to contact');
+  assert.ok(page.includes('href="https://github.com/samueljchen08"'), 'hero links to github');
+  assert.doesNotMatch(page, /id="contact"/, 'the contact section is gone');
+  assert.doesNotMatch(page, /data-contact-form/, 'the contact form is gone');
   assert.doesNotMatch(page, /measurement machinery/);
 });
 
@@ -95,7 +97,7 @@ test('homepage: experience, education, activities sections', () => {
   assert.ok(ins > -1 && ig > ins, 'Nexus AI precedes Goldman');
   assert.ok(page.includes('4.95/5.0'));
   assert.ok(page.includes('Managing Director of Finance'));
-  assert.ok(page.includes('VP of External Relations'));
+  assert.ok(page.includes('VP of Corporate Relations'));
 });
 
 test('project page: result strip, limits callout, toc, prev/next', () => {
@@ -121,18 +123,6 @@ test('resume page renders every role and the PDF button', () => {
   assert.ok(page.includes('Fantasy Football'));
   assert.ok(page.includes('· <a'), 'contact separators keep their spaces');
   assert.ok(!page.includes('·<a'), 'no collapsed separators');
-});
-
-test('contact section: channels and a working message form', () => {
-  const page = html('index.html');
-  assert.match(page, /id="contact"/);
-  assert.ok(page.includes('href="mailto:samchen@mit.edu"'), 'email channel is a real mailto');
-  assert.ok(page.includes('href="tel:+12064758031"'), 'phone channel is dialable');
-  assert.ok(page.includes('data-contact-form'), 'the form ships');
-  for (const id of ['contact-name', 'contact-email', 'contact-message']) {
-    assert.ok(page.includes(`id="${id}"`), `${id} field exists`);
-    assert.ok(page.includes(`for="${id}"`), `${id} has a label`);
-  }
 });
 
 test('404 page and sitemap exist', () => {

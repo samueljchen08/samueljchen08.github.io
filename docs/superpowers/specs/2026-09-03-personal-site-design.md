@@ -34,13 +34,9 @@ Routes:
 | `/resume/` | HTML résumé rendered from `profile.ts`, with PDF download |
 | `/404` | Mono one-liner + link home |
 
-The homepage also carries a **contact** section (`id="contact"`, reached from the hero's
-third action and the nav): every channel written out, plus a short message form. The site
-is static, so the form composes a pre-filled email for the visitor's mail client; setting
-`FORM_ENDPOINT` in `Contact.astro` switches it to a real POST endpoint.
-
-Out of scope (explicitly declined): a writing / blog / notes section; any backend or
-analytics; testimonials or anything not corroborable by the repos, notebook, or PDF.
+Out of scope (explicitly declined): a writing / blog / notes section; any backend, forms,
+or analytics; a dedicated contact section — contact lives in the footer and on the résumé;
+testimonials or anything not corroborable by the repos, notebook, or PDF.
 
 ## 3. Visual system
 
@@ -94,8 +90,8 @@ github`. Links stay inline on mobile; no hamburger.
 
 ### Homepage `/`
 1. **Hero.** `Samuel Chen` (large). Below it a mono meta line
-   `MIT CS-AI '27 · Cambridge, MA / Bellevue, WA` ending in the block cursor. Then three
-   actions: `résumé (pdf) · github · email`. **No tagline or descriptive sentence.**
+   `MIT CS-AI '27 · Cambridge, MA / Bellevue, WA` ending in the block cursor. Then two
+   actions: `résumé (pdf) · github`. **No tagline or descriptive sentence.**
 2. **Projects** (`// projects`, `id="projects"`). The three projects as cards in a
    **circular carousel**: two cards per view on desktop, one below 768px, chevron
    arrows either side, and no end in either direction — next on the last card brings

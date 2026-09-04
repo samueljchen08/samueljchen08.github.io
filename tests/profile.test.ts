@@ -32,7 +32,7 @@ test('activities start with basketball and carry the user-supplied titles', () =
   assert.equal(activities[0].name, 'MIT Varsity Basketball');
   const byName = Object.fromEntries(activities.map((a) => [a.name, a]));
   assert.equal(byName['Sloan Business Club'].role, 'Managing Director of Finance');
-  assert.equal(byName['StartLabs'].role, 'VP of External Relations');
+  assert.equal(byName['StartLabs'].role, 'VP of Corporate Relations');
 });
 
 test('skills and interests are non-empty', () => {
