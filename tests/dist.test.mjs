@@ -45,3 +45,10 @@ test('agentic-commerce-lab page builds with the live report link', () => {
   assert.ok(page.includes('https://samueljchen08.github.io/agentic-commerce-lab/'));
   assert.ok(page.includes('E1a'));
 });
+
+test('multi-object-tracking page builds with the Kalman result', () => {
+  const page = html('projects/multi-object-tracking/index.html');
+  assert.ok(page.includes('0.219'));
+  assert.ok(page.includes('16,009'));
+  assert.ok(page.includes('https://drive.google.com/file/d/14I8We1yRNw1d1kzCVHLzmc5P-jsfh__H/view'));
+});
