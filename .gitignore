@@ -23,10 +23,8 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# Impeccable working files
-.impeccable/review/
-.impeccable/questions/
-.impeccable/direction-payload.json
+# verification output
+screenshots/
 
 # SDD working files
 .superpowers/
