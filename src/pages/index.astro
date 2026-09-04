@@ -70,7 +70,21 @@ const locations = person.locations.join(' / ');
       <div class="interests">
         <p class="label">interests</p>
         <ul class="tags">
-          {interests.map((i) => <li><span class="tag tag--accent">{i}</span></li>)}
+          {interests.map((i) => (
+            <li>
+              {i.href ? (
+                <a
+                  class="tag tag--accent tag--link"
+                  href={i.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={i.description ? `${i.label} — ${i.description}` : i.label}
+                >{i.label}</a>
+              ) : (
+                <span class="tag tag--accent">{i.label}</span>
+              )}
+            </li>
+          ))}
         </ul>
       </div>
     </Section>
@@ -114,5 +128,21 @@ const locations = person.locations.join(' / ');
   }
   .interests .label { margin: 0; white-space: nowrap; }
   .interests .tag--accent { border-color: var(--accent); color: var(--fg); }
+  /* A linked interest lights up so the chip reads as a link rather than a label. */
+  .interests .tag--link {
+    transition:
+      background var(--dur) ease,
+      box-shadow var(--dur) ease,
+      color var(--dur) ease;
+  }
+  .interests .tag--link:hover,
+  .interests .tag--link:focus-visible {
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    color: var(--fg);
+    text-decoration: none;
+    box-shadow:
+      0 0 0 1px var(--accent),
+      0 0 18px -4px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
   @media (max-width: 767px) { .hero { padding: var(--space-5) 0 var(--space-4); } }
 </style>

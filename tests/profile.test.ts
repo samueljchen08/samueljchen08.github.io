@@ -37,5 +37,11 @@ test('activities start with basketball and carry the user-supplied titles', () =
 
 test('skills and interests are non-empty', () => {
   assert.ok(skills.length >= 4);
-  assert.ok(interests.includes('Basketball'));
+  const basketball = interests.find((i) => i.label === 'Basketball');
+  assert.ok(basketball, 'Basketball is listed');
+  assert.match(basketball.href ?? '', /youtube\.com/, 'Basketball links to the highlight reel');
+  assert.ok(
+    interests.filter((i) => i.href).length === 1,
+    'only the interest with something to show is a link',
+  );
 });

@@ -169,13 +169,25 @@ export const activities: Activity[] = [
  */
 export const skills = ['Python', 'HTML', 'CSS', 'JavaScript'];
 
-export const interests = [
-  'Basketball',
-  'Personal Investing',
-  'Podcasts',
-  'Biking',
-  'Skiing',
-  'Hiking',
-  'Working out',
-  'Fantasy Football',
+export interface Interest {
+  label: string;
+  /** An interest with something to show links out; the rest are plain chips. */
+  href?: string;
+  /** Says where the link goes, since "Basketball" alone would not. */
+  description?: string;
+}
+
+export const interests: Interest[] = [
+  {
+    label: 'Basketball',
+    href: 'https://www.youtube.com/watch?v=-vFuig1jOgU',
+    description: 'game highlights on YouTube',
+  },
+  { label: 'Personal Investing' },
+  { label: 'Podcasts' },
+  { label: 'Biking' },
+  { label: 'Skiing' },
+  { label: 'Hiking' },
+  { label: 'Working out' },
+  { label: 'Fantasy Football' },
 ];

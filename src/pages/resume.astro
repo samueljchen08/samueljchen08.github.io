@@ -63,7 +63,7 @@ const technical = await technicalSkills();
     <section>
       <h2 class="label">skills & interests</h2>
       <p><strong>Technical:</strong> {technical.join(', ')}</p>
-      <p><strong>Interests:</strong> {interests.join(', ')}</p>
+      <p><strong>Interests:</strong> {interests.map((i) => i.label).join(', ')}</p>
     </section>
   </main>
 </Base>
