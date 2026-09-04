@@ -11,7 +11,7 @@ const projects = defineCollection({
     order: z.number().int(),
     question: z.string(),
     period: z.string(),
-    repo: z.string().url(),
+    repo: z.string().url().optional(),
     live: z.string().url().optional(),
     paper: z.string().url().optional(),
     stack: z.array(z.string()).min(1),

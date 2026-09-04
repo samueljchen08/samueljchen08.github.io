@@ -178,6 +178,7 @@ export const roles: Role[] = [
     track: 'engineering',
     mark: 'MIT',
     logo: '/logos/mit-sloan.jpg',
+    href: 'https://drive.google.com/file/d/1jBHDCSsCCxZy0hC6gAn1ts2TY_jLJpeu/view?usp=sharing',
     bullets: [
       'Coded five Monte Carlo season simulators in Python measuring dominance and competitive balance across major team sports.',
       'Analyzed 15+ sports to test how durable dominance relates to competitiveness.',

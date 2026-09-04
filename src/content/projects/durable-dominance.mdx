@@ -1,0 +1,109 @@
+---
+title: 'Durable Dominance in Sports'
+order: 4
+question: 'Does a more balanced league actually end up with more dominant teams?'
+period: 'May – Sep 2024'
+paper: 'https://drive.google.com/file/d/1jBHDCSsCCxZy0hC6gAn1ts2TY_jLJpeu/view?usp=sharing'
+stack: ['Python', 'Monte Carlo simulation', 'Regression analysis', 'Parameter fitting']
+headline:
+  value: '0.613 R²'
+  caption: 'a one-parameter skill model reproduces four decades of real NBA win-percentage spread'
+results:
+  - value: '0.450 R²'
+    caption: 'season-points RSD against dominance across five European leagues · p = 7.1e-12'
+  - value: '0.263 R²'
+    caption: 'MLB upsets against dominance — positive, the opposite sign to soccer · p = 0.0024'
+  - value: '15+'
+    caption: 'leagues and competitions, from Formula One to the Tour de France'
+limits: 'Every league result here is a correlation across seasons, not a causal estimate — nothing was randomized and no confounder was controlled for, so a shared driver (expansion, revenue sharing, a rule change) could produce these patterns without balance and dominance touching each other at all. The dominance proxy differs by sport — championships, historical AP top-ten ranking, top-ten finishes — so cross-sport comparisons are directional rather than like-for-like. The simulator fits one skill-spread parameter per season and lands within roughly 2.5 to 12 mean squared error on team wins, close enough to reproduce the shape of a standings table but not any individual record. The miscellaneous sports (cricket, rugby, the World Cups) have samples in the low tens, and their trend lines should be read as suggestive only.'
+---
+
+An empirical study of whether competitive balance and durable dominance actually trade
+off, across more than fifteen leagues and competitions — and a Monte Carlo season
+simulator built to test the same question on synthetic leagues where the true skill
+spread is known by construction.
+
+The hypothesis under test is counterintuitive: **that as competition becomes more
+balanced, the dominance of a few top teams may be reinforced rather than eroded.**
+
+## The two phases
+
+**Measurement.** Collect season-level data — match and race results, end-of-season
+rankings, market values for soccer, rosters for MLB — and plot competitive balance
+against a dominance index for each league. Balance is measured several ways (upset
+percentage, score difference, season-points HHI, relative standard deviation of points,
+standard deviation of win percentage, margin-of-victory spread) because no single proxy
+survives contact with every sport.
+
+**Simulation.** Model each team's skill as a draw from a normal distribution with spread
+`s`, resolve matches probabilistically, simulate the season, then fit `s` per season
+against the real standings. If the fitted spread tracks real competitive balance, the
+model is a usable stand-in for leagues that cannot be re-run.
+
+## Balance against dominance, by measure
+
+Across the five European soccer leagues, the sign depends entirely on which balance
+measure you pick — which is the first result worth having.
+
+| Measure | Direction | R² | p |
+| --- | --- | --- | --- |
+| Season-points RSD | positive | 0.450 | 7.07e-12 |
+| Season-points HHI | positive | 0.341 | 7.37e-12 |
+| Upset percentage | negative | — | — |
+| Score difference | negative | — | — |
+
+Concentration measures (HHI, RSD) rise with dominance; game-level closeness measures
+(upsets, score difference) fall with it. A league can look balanced game to game and
+still concentrate titles.
+
+## Where the sign flips
+
+MLB runs the other way from soccer. Excluding the first twenty years of the sample:
+
+| Relationship | R² | p |
+| --- | --- | --- |
+| Upsets percentage vs dominance | 0.263 | 0.0024 |
+| Closeness of winning percentage vs dominance | 0.323 | 0.00016 |
+
+In baseball, seasons with *more* upsets and *closer* winning percentages are the seasons
+with *more* concentrated historical success — the hypothesis holding in the one sport
+with the longest continuous record. In soccer the same comparison points the other way.
+That disagreement is the finding: "competitive balance" is not one quantity, and which
+way it moves against dominance depends on the sport and the measure together.
+
+## The simulator
+
+Team skill is drawn from a normal distribution; a match resolves as
+
+```
+P(Team 1 wins) = c^s1 / (c^s1 + c^s2)
+```
+
+with a tie-capable variant for hockey and soccer that adds a draw parameter `b`:
+
+```
+P(Team 1 wins) = b·c^s1 / (b·c^s1 + c^s2)
+P(Tie)         = 1 − P(Team 1 wins) − P(Team 2 wins)
+```
+
+Fitting `c` and the per-season skill spread `s` against real NBA seasons from 1981–1982
+to 2022–2023 gives mean squared errors between roughly 2.5 and 12 on team win totals,
+with `c` stable at 0.908 across the whole period.
+
+The validation that matters is whether the fitted spread predicts real balance:
+
+| League | Simulated spread vs real spread | R² | p |
+| --- | --- | --- | --- |
+| NBA | SD of winning percentage | 0.613 | 5.5e-10 |
+| NHL | SD of point percentage | 0.403 | 6.3e-06 |
+
+A single fitted parameter explaining 61% of the variance in four decades of real NBA
+standings spread is the strongest evidence here that the simulator is modelling the
+league rather than fitting noise.
+
+## Data collected
+
+Formula One, college football, the NFL, the NHL, NCAA Men's March Madness, MLB, and the
+five major European soccer leagues (Premier League, Bundesliga, Serie A, Ligue 1, La
+Liga), plus the Masters, tennis Grand Slams, the Tour de France, cricket, rugby, and both
+World Cups as smaller cross-checks.

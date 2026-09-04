@@ -28,16 +28,16 @@ const { title, question, period, repo, live, paper, stack, results, limits } = p
         <span class="mono period">{period}</span>
         <Tags items={stack} />
         <ul class="links mono">
-          <li><a href={repo} target="_blank" rel="noopener noreferrer">repo</a></li>
+          {repo && <li><a href={repo} target="_blank" rel="noopener noreferrer">repo</a></li>}
           {live && (
             <li>
-              <span class="sep" aria-hidden="true">→</span>
+              {repo && <span class="sep" aria-hidden="true">→</span>}
               <a href={live} target="_blank" rel="noopener noreferrer">live report</a>
             </li>
           )}
           {paper && (
             <li>
-              <span class="sep" aria-hidden="true">→</span>
+              {repo && <span class="sep" aria-hidden="true">→</span>}
               <a href={paper} target="_blank" rel="noopener noreferrer">paper</a>
             </li>
           )}

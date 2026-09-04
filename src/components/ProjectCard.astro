@@ -21,7 +21,7 @@ const { title, question, stack, repo, live, paper } = project.data;
 const primary = paper ?? repo;
 const links = [
   { href: `/projects/${project.id}/`, label: 'read', external: false },
-  { href: repo, label: 'repo', external: true },
+  ...(repo ? [{ href: repo, label: 'repo', external: true }] : []),
   ...(live ? [{ href: live, label: 'live report', external: true }] : []),
   ...(paper ? [{ href: paper, label: 'paper', external: true }] : []),
 ].map((link) => ({ ...link, stretched: link.href === primary }));
