@@ -27,3 +27,6 @@ pnpm-debug.log*
 .impeccable/review/
 .impeccable/questions/
 .impeccable/direction-payload.json
+
+# SDD working files
+.superpowers/
