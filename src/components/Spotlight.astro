@@ -1,0 +1,96 @@
+---
+/**
+ * A faint accent-colored light that follows the cursor across the dark page.
+ *
+ * It blends with `screen`, so it lifts the near-black ground without touching the
+ * legibility of text above it (screen leaves white unchanged). It is dark-mode only —
+ * on the light ground the same light reads as a smudge — and it never appears for
+ * touch pointers, reduced-motion visitors, or print.
+ */
+---
+
+<div class="spotlight" aria-hidden="true"></div>
+
+<style>
+  .spotlight {
+    position: fixed;
+    top: 0;
+    left: 0;
+    /* Centered on the cursor: half the box is pulled back in each axis. */
+    width: var(--spotlight-size);
+    height: var(--spotlight-size);
+    margin: calc(var(--spotlight-size) / -2) 0 0 calc(var(--spotlight-size) / -2);
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      circle closest-side,
+      color-mix(in srgb, var(--accent) 26%, transparent),
+      color-mix(in srgb, var(--accent) 9%, transparent) 45%,
+      transparent 78%
+    );
+    mix-blend-mode: screen;
+    /* The lag is the authored part: the light trails the cursor and settles. */
+    transition:
+      transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 260ms ease;
+  }
+
+  /* Light mode keeps its own ground; the toggle hides the light with the theme. */
+  :global(:root[data-theme='light']) .spotlight {
+    display: none;
+  }
+
+  /* No cursor to follow, or motion the visitor has asked us not to make. */
+  @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .spotlight {
+      display: none;
+    }
+  }
+
+  @media print {
+    .spotlight {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const light = document.querySelector<HTMLElement>('.spotlight');
+  const wants =
+    light &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (wants) {
+    let x = 0;
+    let y = 0;
+    let queued = false;
+
+    const paint = () => {
+      queued = false;
+      light.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      light.style.opacity = '1';
+    };
+
+    window.addEventListener(
+      'pointermove',
+      (event) => {
+        if (event.pointerType !== 'mouse') return;
+        x = event.clientX;
+        y = event.clientY;
+        // Coalesce to one write per frame however fast the pointer moves.
+        if (!queued) {
+          queued = true;
+          requestAnimationFrame(paint);
+        }
+      },
+      { passive: true },
+    );
+
+    // Fade out when the cursor leaves the window rather than stranding the light.
+    document.addEventListener('mouseleave', () => {
+      light.style.opacity = '0';
+    });
+  }
+</script>

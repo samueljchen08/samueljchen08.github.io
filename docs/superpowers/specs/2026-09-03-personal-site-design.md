@@ -54,8 +54,11 @@ with precision, small details, no decoration for its own sake.
 | `--accent` | `#8b7cff` | links, cursor, headline numbers |
 | `--ok` / `--bad` | muted green / muted red | result-table tints only |
 
-**Light mode** is a full token swap on an off-white ground (`#f6f7f9`), reached by a
-toggle in the nav; initial state follows `prefers-color-scheme`. Dark is the design
+**Dark is the default**, not merely the design target: it is the base `:root` palette,
+so it is what a visitor gets before any script runs. **Light mode** is a full token swap
+on an off-white ground (`#f6f7f9`) under `[data-theme="light"]`, reached by the nav
+toggle and remembered in `localStorage`. The system `prefers-color-scheme` does not
+override the default — only the visitor's own choice does. Dark is the design
 target; light must be correct and legible, not a second design.
 
 **Type.** Inter (variable) for body and headings; JetBrains Mono (variable) for section
@@ -63,7 +66,14 @@ labels, dates, tags, table numbers, nav, and meta lines. Both self-hosted via
 `@fontsource-variable/*`. Body 17px / 1.6, measure ≤ 68ch. Headings tight-tracked, heavy.
 
 **Texture.** Faint dot grid behind the hero only; mono labels prefixed `//`; hairline
-rules between sections. No gradients, no glassmorphism, no shadows beyond a 1px border.
+rules between sections. No glassmorphism, no shadows beyond a 1px border. Gradients are
+reserved for two authored lights: the hero's dot grid, and the cursor spotlight below.
+
+**Cursor spotlight.** One authored ambient effect: a soft accent-colored light of
+`--spotlight-size` (480px) follows the cursor, blended with `screen` so it lifts the
+near-black ground without altering the contrast of text above it. It trails the pointer
+by 180ms and settles. Dark mode only; hidden for coarse/absent pointers, under
+`prefers-reduced-motion`, and in print. Implemented in `components/Spotlight.astro`.
 
 **Motion.** Hover state changes; a single `fade-up` on section entry; a blinking block
 cursor at the end of the hero meta line. All ≤ 200 ms; everything disabled under

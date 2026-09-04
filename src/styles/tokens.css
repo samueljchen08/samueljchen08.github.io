@@ -1,17 +1,19 @@
-/* Design tokens. Light is the base; dark overrides under [data-theme="dark"].
-   The inline script in Base.astro always sets data-theme before first paint. */
+/* Design tokens. Dark is the base — it is the site's default and what a visitor
+   gets with JavaScript off. Light overrides under [data-theme="light"], which the
+   inline script in Base.astro sets before first paint when the visitor picks it.
+   --spotlight-size is the diameter of the cursor light in Spotlight.astro. */
 :root {
-  color-scheme: light;
-  --bg: #f6f7f9;
-  --bg-raised: #ffffff;
-  --border: #e2e5ea;
-  --fg: #14171c;
-  --fg-muted: #5c636e;
-  --accent: #6b5cff;
-  --accent-contrast: #ffffff;
-  --ok: #1f8a4c;
-  --bad: #c0392b;
-  --grid-dot: rgba(20, 23, 28, 0.08);
+  color-scheme: dark;
+  --bg: #0b0d10;
+  --bg-raised: #12151a;
+  --border: #1f242b;
+  --fg: #e6e8eb;
+  --fg-muted: #8b929c;
+  --accent: #8b7cff;
+  --accent-contrast: #0b0d10;
+  --ok: #4cc38a;
+  --bad: #f16a6a;
+  --grid-dot: rgba(230, 232, 235, 0.08);
 
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -26,21 +28,22 @@
   --max: 1100px;
   --measure: 68ch;
   --radius: 4px;
+  --spotlight-size: 480px;
   --dur: 160ms;
 }
 
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --bg: #0b0d10;
-  --bg-raised: #12151a;
-  --border: #1f242b;
-  --fg: #e6e8eb;
-  --fg-muted: #8b929c;
-  --accent: #8b7cff;
-  --accent-contrast: #0b0d10;
-  --ok: #4cc38a;
-  --bad: #f16a6a;
-  --grid-dot: rgba(230, 232, 235, 0.08);
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --bg-raised: #ffffff;
+  --border: #e2e5ea;
+  --fg: #14171c;
+  --fg-muted: #5c636e;
+  --accent: #6b5cff;
+  --accent-contrast: #ffffff;
+  --ok: #1f8a4c;
+  --bad: #c0392b;
+  --grid-dot: rgba(20, 23, 28, 0.08);
 }
 
 @media (prefers-reduced-motion: reduce) {

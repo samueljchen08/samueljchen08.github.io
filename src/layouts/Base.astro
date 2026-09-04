@@ -5,6 +5,7 @@ import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import Spotlight from '../components/Spotlight.astro';
 
 interface Props {
   title: string;
@@ -45,12 +46,14 @@ const ogImage = new URL('/og.png', Astro.site!);
       (function () {
         var stored = null;
         try { stored = localStorage.getItem('theme'); } catch (e) {}
-        var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.dataset.theme = stored || (dark ? 'dark' : 'light');
+        // Dark is the site's default; the system preference does not override it.
+        // Only a visitor's own choice, stored from the toggle, switches to light.
+        document.documentElement.dataset.theme = stored === 'light' ? 'light' : 'dark';
       })();
     </script>
   </head>
   <body>
+    <Spotlight />
     <a class="skip" href="#main">Skip to content</a>
     <Nav />
     <slot />

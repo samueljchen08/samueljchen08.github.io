@@ -18,8 +18,8 @@
   }
   .theme-toggle:hover { border-color: var(--accent); color: var(--fg); }
   .icon--moon { display: none; }
-  :global(:root[data-theme='dark']) .icon--sun { display: none; }
-  :global(:root[data-theme='dark']) .icon--moon { display: block; }
+  :global(:root:not([data-theme='light'])) .icon--sun { display: none; }
+  :global(:root:not([data-theme='light'])) .icon--moon { display: block; }
 </style>
 
 <script>
