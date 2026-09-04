@@ -18,6 +18,17 @@ function* htmlFiles(dir) {
   }
 }
 
+// Candidate dist/ files a path could resolve to: a literal file, an index.html
+// under a directory, or a flat "<path>.html" (e.g. /404/ -> dist/404.html, how
+// Astro emits its special 404 page regardless of trailingSlash config).
+function distCandidates(path) {
+  return [
+    join(dist, path),
+    join(dist, path, 'index.html'),
+    join(dist, path.replace(/\/$/, '') + '.html'),
+  ];
+}
+
 const internal = new Map(); // href -> [pages]
 const external = new Map();
 for (const file of htmlFiles(dist)) {
@@ -29,7 +40,7 @@ for (const file of htmlFiles(dist)) {
     let key = href;
     if (href.startsWith(SITE + '/')) {
       const path = href.slice(SITE.length).split('#')[0].split('?')[0];
-      if (existsSync(join(dist, path)) || existsSync(join(dist, path, 'index.html'))) {
+      if (distCandidates(path).some((c) => existsSync(c))) {
         bucket = internal;
         key = path;
       }
@@ -42,8 +53,7 @@ for (const file of htmlFiles(dist)) {
 let failures = 0;
 for (const [href, pages] of internal) {
   const path = href.split('#')[0].split('?')[0];
-  const candidates = [join(dist, path), join(dist, path, 'index.html')];
-  if (!candidates.some((c) => existsSync(c))) {
+  if (!distCandidates(path).some((c) => existsSync(c))) {
     failures++;
     console.log(`BROKEN internal ${href}  (from ${pages[0]})`);
   }
