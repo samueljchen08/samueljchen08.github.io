@@ -42,7 +42,7 @@ test('robots and favicon ship', () => {
 
 test('opsgym project page builds with its headline figures', () => {
   const page = html('projects/opsgym/index.html');
-  assert.match(page, /<title>opsgym — Samuel Chen<\/title>/);
+  assert.match(page, /<title>Opsgym — Samuel Chen<\/title>/);
   assert.ok(page.includes('22.5'), 'noise floor figure present');
   assert.ok(page.includes('0.450'), 'pass@1 present');
   assert.ok(page.includes('https://github.com/samueljchen08/opsgym'));
@@ -67,7 +67,7 @@ test('homepage: hero has meta line and three actions, no tagline', () => {
   const page = html('index.html');
   assert.ok(page.includes("MIT CS-AI '27 · Cambridge, MA / Bellevue, WA"));
   assert.ok(page.includes('href="/samuel-chen-resume.pdf"'));
-  assert.ok(page.includes('href="mailto:samchen@mit.edu"'));
+  assert.ok(page.includes('href="#contact"'), 'the third hero action goes to contact');
   assert.doesNotMatch(page, /measurement machinery/);
 });
 
@@ -82,9 +82,9 @@ test('homepage: projects carousel, in order and without the stat column', () => 
   }
   assert.match(page, /aria-label="Next projects"/, 'projects carousel has controls');
   assert.match(page, /aria-label="Next roles"/, 'experience carousel has controls');
-  // Every card links to its repo, and the arrow after `repo` separates it from the report.
-  assert.ok(page.includes('repo →'), 'repo link carries an arrow');
-  assert.ok(page.includes('live report →'), 'live report link carries an arrow');
+  // Arrows separate links; nothing trails the last one in a card.
+  assert.doesNotMatch(page, /live report<\/a>\s*<span[^>]*>→/, 'no arrow after the last link');
+  assert.ok(page.includes('>Opsgym<'), 'the project title is capitalised');
 });
 
 test('homepage: experience, education, activities sections', () => {
@@ -121,6 +121,18 @@ test('resume page renders every role and the PDF button', () => {
   assert.ok(page.includes('Fantasy Football'));
   assert.ok(page.includes('· <a'), 'contact separators keep their spaces');
   assert.ok(!page.includes('·<a'), 'no collapsed separators');
+});
+
+test('contact section: channels and a working message form', () => {
+  const page = html('index.html');
+  assert.match(page, /id="contact"/);
+  assert.ok(page.includes('href="mailto:samchen@mit.edu"'), 'email channel is a real mailto');
+  assert.ok(page.includes('href="tel:+12064758031"'), 'phone channel is dialable');
+  assert.ok(page.includes('data-contact-form'), 'the form ships');
+  for (const id of ['contact-name', 'contact-email', 'contact-message']) {
+    assert.ok(page.includes(`id="${id}"`), `${id} field exists`);
+    assert.ok(page.includes(`for="${id}"`), `${id} has a label`);
+  }
 });
 
 test('404 page and sitemap exist', () => {

@@ -34,6 +34,12 @@ export const person = {
   resumePdf: '/samuel-chen-resume.pdf',
 } as const;
 
+/**
+ * E.164 for `tel:` links. The site is shared cold and read abroad, so the US country
+ * code stays on the dialable form even though the printed number omits it.
+ */
+export const phoneHref = `tel:+1${person.phone.replace(/\D/g, '')}`;
+
 export const education = {
   school: 'Massachusetts Institute of Technology',
   location: 'Cambridge, MA',

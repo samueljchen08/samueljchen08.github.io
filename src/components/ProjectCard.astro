@@ -8,7 +8,17 @@ interface Props {
 
 const { project } = Astro.props;
 const { title, question, stack, repo, live } = project.data;
-const readHref = `/projects/${project.id}/`;
+
+/**
+ * The arrow is a separator, not a suffix: `read → repo → live report`, with nothing
+ * trailing the last link. `repo` is the stretched one, so it must stay static for its
+ * ::after to resolve against the card.
+ */
+const links = [
+  { href: `/projects/${project.id}/`, label: 'read', external: false, stretched: false },
+  { href: repo, label: 'repo', external: true, stretched: true },
+  ...(live ? [{ href: live, label: 'live report', external: true, stretched: false }] : []),
+];
 ---
 
 <article class="card">
@@ -16,14 +26,16 @@ const readHref = `/projects/${project.id}/`;
   <p class="question">{question}</p>
   <Tags items={stack} />
   <ul class="links">
-    <li><a href={readHref}>read →</a></li>
-    <li>
-      {/* Stays static so its ::after resolves against the card and covers it. */}
-      <a class="stretched" href={repo} target="_blank" rel="noopener noreferrer">repo →</a>
-    </li>
-    {live && (
-      <li><a href={live} target="_blank" rel="noopener noreferrer">live report →</a></li>
-    )}
+    {links.map((link, i) => (
+      <li>
+        <a
+          class={link.stretched ? 'stretched' : undefined}
+          href={link.href}
+          {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        >{link.label}</a>
+        {i < links.length - 1 && <span class="sep" aria-hidden="true">→</span>}
+      </li>
+    ))}
   </ul>
 </article>
 
@@ -75,7 +87,8 @@ const readHref = `/projects/${project.id}/`;
     font-size: 0.85rem;
     max-width: none;
   }
-  .links li { margin: 0; }
+  .links li { margin: 0; display: inline-flex; align-items: center; gap: var(--space-2); }
+  .sep { color: var(--fg-muted); }
 
   /* Every link except the stretched one has to sit above its overlay to stay clickable. */
   .links a:not(.stretched) {

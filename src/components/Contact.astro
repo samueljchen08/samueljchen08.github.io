@@ -1,0 +1,202 @@
+---
+import { person, phoneHref } from '../data/profile';
+
+/**
+ * Contact channels plus a short message form.
+ *
+ * The site is static and has no backend, so the form composes a pre-filled email and
+ * hands it to the visitor's mail client rather than posting anywhere. That keeps the
+ * message in their sent items and needs no third-party form service. To switch to a
+ * real endpoint later (Formspree, Web3Forms), set FORM_ENDPOINT in the script below.
+ *
+ * Every channel is also written out in full above the form, so a visitor whose browser
+ * has no mail handler still has somewhere to go.
+ */
+const channels = [
+  { key: 'email', label: person.email, href: `mailto:${person.email}` },
+  { key: 'phone', label: person.phone, href: phoneHref },
+  { key: 'linkedin', label: 'linkedin.com/in/samuelj-chen', href: person.linkedin },
+  { key: 'github', label: 'github.com/samueljchen08', href: person.github },
+];
+---
+
+<div class="contact">
+  <div class="channels">
+    <p class="lead">
+      Open to software engineering internships and new-grad roles. The fastest way to
+      reach me is email — or send a note here and it will land in the same inbox.
+    </p>
+    <dl>
+      {channels.map((c) => (
+        <div class="channel">
+          <dt>{c.key}</dt>
+          <dd>
+            <a href={c.href} {...(c.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+              {c.label}
+            </a>
+          </dd>
+        </div>
+      ))}
+      <div class="channel">
+        <dt>based</dt>
+        <dd>{person.locations.join(' / ')}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <form class="form" data-contact-form>
+    <div class="field">
+      <label for="contact-name">name</label>
+      <input id="contact-name" name="name" type="text" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label for="contact-email">your email</label>
+      <input id="contact-email" name="email" type="email" autocomplete="email" required />
+    </div>
+    <div class="field">
+      <label for="contact-message">message</label>
+      <textarea id="contact-message" name="message" rows="5" required></textarea>
+    </div>
+    <div class="submit">
+      <button class="btn btn--primary" type="submit">send message</button>
+      <p class="hint" data-hint>Opens your mail app with the message ready to send.</p>
+    </div>
+  </form>
+</div>
+
+<style>
+  .contact {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: var(--space-5);
+    align-items: start;
+  }
+
+  .lead {
+    color: var(--fg-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  dl { margin: 0; }
+  .channel {
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: var(--space-2);
+    padding: var(--space-1) 0;
+    border-top: 1px solid var(--border);
+  }
+  .channel:last-child { border-bottom: 1px solid var(--border); }
+  dt {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--fg-muted);
+  }
+  dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    word-break: break-word;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: var(--space-2);
+  }
+  label {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--fg-muted);
+  }
+  input,
+  textarea {
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--fg);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    width: 100%;
+    caret-color: var(--accent);
+    transition: border-color var(--dur) ease;
+  }
+  textarea { resize: vertical; min-height: 120px; line-height: 1.55; }
+  input:hover,
+  textarea:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+  input:focus,
+  textarea:focus { outline: none; border-color: var(--accent); }
+  /* The browser only paints this once the field has been submitted or blurred invalid. */
+  input:user-invalid,
+  textarea:user-invalid { border-color: var(--bad); }
+
+  .submit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+  }
+  button { cursor: pointer; font-family: var(--font-mono); border: 1px solid var(--accent); }
+  .hint {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--fg-muted);
+    margin: 0;
+    max-width: none;
+  }
+  .hint[data-state='sent'] { color: var(--ok); }
+
+  @media (max-width: 900px) {
+    .contact { grid-template-columns: 1fr; gap: var(--space-4); }
+  }
+</style>
+
+<script>
+  // Set this to a Formspree/Web3Forms URL to post the form instead of composing mail.
+  const FORM_ENDPOINT = '';
+  const TO = 'samchen@mit.edu';
+
+  document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
+    const hint = form.querySelector<HTMLElement>('[data-hint]');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const data = new FormData(form);
+      const name = String(data.get('name') ?? '').trim();
+      const email = String(data.get('email') ?? '').trim();
+      const message = String(data.get('message') ?? '').trim();
+
+      if (FORM_ENDPOINT) {
+        try {
+          const response = await fetch(FORM_ENDPOINT, {
+            method: 'POST',
+            headers: { Accept: 'application/json' },
+            body: data,
+          });
+          if (!response.ok) throw new Error(String(response.status));
+          form.reset();
+          if (hint) {
+            hint.textContent = 'Thanks — your message is on its way.';
+            hint.dataset.state = 'sent';
+          }
+        } catch {
+          if (hint) hint.textContent = `Something went wrong. Please email ${TO} directly.`;
+        }
+        return;
+      }
+
+      const subject = `Website message from ${name}`;
+      const body = `${message}\n\n— ${name}\n${email}`;
+      window.location.href =
+        `mailto:${TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      if (hint) {
+        hint.textContent = `Your mail app should be opening. If nothing happens, email ${TO}.`;
+        hint.dataset.state = 'sent';
+      }
+    });
+  });
+</script>

@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
 import Carousel from '../components/Carousel.astro';
+import Contact from '../components/Contact.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import ExperienceCard from '../components/ExperienceCard.astro';
 import Tags from '../components/Tags.astro';
@@ -28,7 +29,7 @@ const locations = person.locations.join(' / ');
         <div class="actions">
           <a class="btn btn--primary" href={person.resumePdf}>résumé (pdf)</a>
           <a class="btn" href={person.github} target="_blank" rel="noopener noreferrer">github</a>
-          <a class="btn" href={`mailto:${person.email}`}>email</a>
+          <a class="btn" href="#contact">contact</a>
         </div>
       </div>
     </section>
@@ -72,6 +73,10 @@ const locations = person.locations.join(' / ');
           {interests.map((i) => <li><span class="tag tag--accent">{i}</span></li>)}
         </ul>
       </div>
+    </Section>
+
+    <Section id="contact" label="contact">
+      <Contact />
     </Section>
   </main>
 </Base>
