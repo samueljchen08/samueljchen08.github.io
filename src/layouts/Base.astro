@@ -51,6 +51,21 @@ const ogImage = new URL('/og.png', Astro.site!);
     <Footer />
     <script>
       document.documentElement.classList.add('js');
+
+      /**
+       * Anything that leaves this page opens in a new tab, so a visitor never loses
+       * their place. Same-page anchors are the exception — including the nav's
+       * `/#projects` while already on the homepage — as are mailto: and tel:.
+       */
+      for (const link of document.querySelectorAll<HTMLAnchorElement>('a[href]')) {
+        const raw = link.getAttribute('href') ?? '';
+        if (raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:')) continue;
+        const url = new URL(link.href);
+        // Same page — with or without a hash — never opens a second copy of itself.
+        if (url.origin === location.origin && url.pathname === location.pathname) continue;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+      }
       const els = document.querySelectorAll('.reveal');
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduce || !('IntersectionObserver' in window)) {

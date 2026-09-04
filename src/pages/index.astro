@@ -29,7 +29,7 @@ const locations = person.locations.join(' / ');
         <h1>{person.name}</h1>
         <p class="meta mono">MIT CS-AI '{gradYear} · {locations}<span class="cursor" aria-hidden="true"></span></p>
         <div class="actions">
-          <a class="btn btn--primary" href={person.resumePdf}>résumé (pdf)</a>
+          <a class="btn btn--primary" href={person.resumePdf} target="_blank" rel="noopener noreferrer">résumé (pdf)</a>
           <a class="btn" href={person.github} target="_blank" rel="noopener noreferrer">github</a>
         </div>
         </div>

@@ -92,6 +92,13 @@ cursor at the end of the hero meta line. All ≤ 200 ms; everything disabled und
 
 ## 4. Page structure
 
+**Link targets.** Anything that leaves the current page opens in a new tab, so a visitor
+never loses their place. Same-page anchors — the skip link, the project TOC, the nav's
+`/#projects` while on the homepage, and a link to the page one is already on — stay in
+the tab, as do `mailto:` and `tel:`. Applied in one pass in `Base.astro` so MDX prose
+links are covered too; the résumé PDF also carries the attribute in markup, so it holds
+without JavaScript.
+
 ### Nav (all pages)
 Sticky, slim. Left: `samuel chen` (mono). Right: `projects · experience · résumé ·
 github`. Links stay inline on mobile; no hamburger.
