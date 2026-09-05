@@ -1,109 +1,178 @@
 ---
 title: 'Durable Dominance in Sports'
-order: 4
-question: 'Does a more balanced league actually end up with more dominant teams?'
-period: 'May – Sep 2024'
-paper: 'https://drive.google.com/file/d/1jBHDCSsCCxZy0hC6gAn1ts2TY_jLJpeu/view?usp=sharing'
-stack: ['Python', 'Monte Carlo simulation', 'Regression analysis', 'Parameter fitting']
+order: 2
+question: 'Are championships more concentrated than the teams simply being better can explain?'
+period: '2024 – 2026'
+links:
+  - label: 'durable dominance'
+    href: 'https://samueljchen08.github.io/DurableDominance/reports/durable_dominance_report.html'
+    primary: true
+  - label: 'cross-sport atlas'
+    href: 'https://samueljchen08.github.io/DurableDominance/reports/cross_sport_atlas.html'
+  - label: 'repo'
+    href: 'https://github.com/samueljchen08/DurableDominance'
+stack:
+  ['Python', 'Monte Carlo simulation', 'Maximum likelihood estimation', 'Regression analysis', 'scikit-learn']
 headline:
-  value: '0.613 R²'
-  caption: 'a one-parameter skill model reproduces four decades of real NBA win-percentage spread'
+  value: '14 vs 20'
+  caption: 'unique NBA champions in 43 seasons, against the number a random walk over real team strength predicts'
 results:
-  - value: '0.450 R²'
-    caption: 'season-points RSD against dominance across five European leagues · p = 7.1e-12'
-  - value: '0.263 R²'
-    caption: 'MLB upsets against dominance — positive, the opposite sign to soccer · p = 0.0024'
-  - value: '15+'
-    caption: 'leagues and competitions, from Formula One to the Tour de France'
-limits: 'Every league result here is a correlation across seasons, not a causal estimate — nothing was randomized and no confounder was controlled for, so a shared driver (expansion, revenue sharing, a rule change) could produce these patterns without balance and dominance touching each other at all. The dominance proxy differs by sport — championships, historical AP top-ten ranking, top-ten finishes — so cross-sport comparisons are directional rather than like-for-like. The simulator fits one skill-spread parameter per season and lands within roughly 2.5 to 12 mean squared error on team wins, close enough to reproduce the shape of a standings table but not any individual record. The miscellaneous sports (cricket, rugby, the World Cups) have samples in the low tens, and their trend lines should be read as suggestive only.'
+  - value: '1.6×'
+    caption: 'title concentration (HHI) above what measured team quality produces · p = 0.001'
+  - value: 'γ = 1.0'
+    caption: 'fitted temperature — the reliability curve tracks the diagonal across all six bins'
+  - value: '0.171'
+    caption: 'held-out log-loss: the parameter-free simulation beats every model trained against it'
+  - value: '3 of 84'
+    caption: 'correlations behind the original hypothesis that survive a false-discovery correction'
+limits: 'Every league-level correlation here is observational — nothing was randomized and no confounder was controlled for, so a shared driver such as expansion or a rule change could produce these patterns on its own. The concentration test rests on one league and 43 seasons, and its mechanism is not identified: over-performance does not replicate across halves of history (p = 0.23) and is not predictable out of sample (AUC 0.54). Every season is run through the same 16-team bracket even though the real NBA seeded 12 teams before 1984 — deliberate, so an era difference reflects teams rather than a rule change, but it means format changes are not modelled. The cross-sport atlas approximates the tennis field by that year’s finalists, making 1.79× a lower bound, and the Kentucky Derby is reported descriptively because its eligible field is not observable. The soccer, MLB and NHL files behind the original deck were never committed, so everything the deck claimed about those leagues is taken on trust rather than reproduced.'
 ---
 
-An empirical study of whether competitive balance and durable dominance actually trade
-off, across more than fifteen leagues and competitions — and a Monte Carlo season
-simulator built to test the same question on synthetic leagues where the true skill
-spread is known by construction.
+How concentrated is championship success, and how much of that concentration is
+explained by the teams simply being better? The NBA carries the weight — it is the only
+league here with a verified champion for every season from 1980–81 to 2022–23 and a
+complete head-to-head matrix — with NCAA football, golf, cycling, tennis, cricket and
+the Women's World Cup extending the comparison.
 
-The hypothesis under test is counterintuitive: **that as competition becomes more
-balanced, the dominance of a few top teams may be reinforced rather than eroded.**
+**Fourteen franchises won the last 43 NBA titles. A random walk driven by each season's
+real team strengths says there should have been twenty.**
 
-## The two phases
+## The hypothesis did not survive
 
-**Measurement.** Collect season-level data — match and race results, end-of-season
-rankings, market values for soccer, rosters for MLB — and plot competitive balance
-against a dominance index for each league. Balance is measured several ways (upset
-percentage, score difference, season-points HHI, relative standard deviation of points,
-standard deviation of win percentage, margin-of-victory spread) because no single proxy
-survives contact with every sport.
+The study began from a counterintuitive premise: that a *more* balanced league might
+reinforce the dominance of a few elite teams rather than erode it. Testing it properly
+means six backward-looking measures of how decorated each champion was against eight
+measures of how tight its league was — 84 correlations from one dataset, so they are
+read against a Benjamini-Hochberg false-discovery correction rather than raw p-values,
+and both sides are detrended on year first, because pedigree counts accumulate
+mechanically and league balance drifts with expansion.
 
-**Simulation.** Model each team's skill as a draw from a normal distribution with spread
-`s`, resolve matches probabilistically, simulate the season, then fit `s` per season
-against the real standings. If the fitted spread tracks real competitive balance, the
-model is a usable stand-in for leagues that cannot be re-run.
+| | count |
+| --- | --- |
+| pairs tested | 84 |
+| significant raw | 8 |
+| significant detrended | 7 (≈4 expected by chance) |
+| **surviving FDR (q ≤ 0.10)** | **3** |
 
-## Balance against dominance, by measure
+All three survivors are NCAA football, and every one points the same way: **less**
+balanced seasons crown more decorated champions. Imbalance and entrenchment travel
+together — the intuitive direction, and the opposite of the premise. Nothing survives in
+the NBA at all.
 
-Across the five European soccer leagues, the sign depends entirely on which balance
-measure you pick — which is the first result worth having.
+That is the honest end of the original question, and the reason the project moved to a
+different one.
 
-| Measure | Direction | R² | p |
-| --- | --- | --- | --- |
-| Season-points RSD | positive | 0.450 | 7.07e-12 |
-| Season-points HHI | positive | 0.341 | 7.37e-12 |
-| Upset percentage | negative | — | — |
-| Score difference | negative | — | — |
+## A test with a null model behind it
 
-Concentration measures (HHI, RSD) rise with dominance; game-level closeness measures
-(upsets, score difference) fall with it. A league can look balanced game to game and
-still concentrate titles.
+A postseason is a short random walk. Each series is seven Bernoulli draws weighted by
+the strength gap plus home court; win four and advance. Feed each season's *real*
+strengths through it and you get the title distribution a league should produce if
+nothing carried across seasons except quality already visible in the standings.
 
-## Where the sign flips
+Strength is a penalised Bradley-Terry MLE on the full head-to-head matrix, so a team is
+credited for *who* it beat, not just how often it won. The matrix is complete and
+reconciles exactly with the standings — 82 games per team, zero mismatches.
 
-MLB runs the other way from soccer. Excluding the first twenty years of the sample:
+**The model is calibrated.** Scaling every strength gap by a temperature γ and
+maximising the likelihood of the 43 real champions returns γ = 1.0: the raw fitted gaps
+need no adjustment. The likelihood is flat from 0.8 to 1.4, so that pins the scale only
+loosely; the reliability curve is the sharper check, and it tracks the diagonal across
+all six probability bins — teams given a 52% chance won 53% of the time.
 
-| Relationship | R² | p |
+**And reality is still far more concentrated.** Drawing 20,000 alternate 43-season
+leagues:
+
+| Statistic | Real | Simulated median | 95% interval | p |
+| --- | --- | --- | --- | --- |
+| unique champions | **14** | 20 | 16 – 23 | 0.004 |
+| title HHI | **0.120** | 0.073 | 0.058 – 0.098 | 0.001 |
+| top team's share | **0.233** | 0.140 | 0.093 – 0.209 | 0.004 |
+| title entropy | **2.345** | 2.781 | 2.551 – 2.976 | 0.0004 |
+| back-to-back rate | **0.286** | 0.143 | 0.048 – 0.262 | 0.015 |
+
+All five outside the interval, all in the same direction, and the result holds for all
+three strength estimators (Bradley-Terry, margin of victory, raw record) with or without
+home court — p ≤ 0.004 in every combination.
+
+## Calibration is marginal; concentration is joint
+
+The obvious objection is that the simulation already uses real strengths, and its
+per-season predictions are calibrated, so how can the 43-season record disagree with it?
+
+Both can be true. Calibration is a property of each season taken on its own;
+concentration is a property of the sequence. A model can be perfectly calibrated per
+team-season and still under-produce dynasties, and the gap means championship outcomes
+are correlated across seasons for the same franchise *beyond* what measured strength
+explains. That gap is the object of study rather than an error in it.
+
+What the residual is not:
+
+- **Not persistent quality.** Lag-1 autocorrelation of strength is ρ = 0.58, and it is already priced in — the simulation reads each season's real strengths. Within-franchise variation (SD 0.61) dwarfs between-franchise variation (SD 0.23): franchises cycle rather than being permanently good.
+- **Not a stable franchise trait.** Splitting history in half and correlating each franchise's excess titles across the two halves gives r = +0.24, p = 0.23, n = 28. Positive, not significant.
+- **Not the modern league.** The effect is strongest in 1995–2009 (p = 0.003) and **absent in 2010–2023**, where the real and simulated counts are identical.
+
+Sweeping a fixed per-franchise strength bonus, the observed concentration is reproduced
+at a bonus of about 0.38 log-odds — roughly 57% of the within-season spread of team
+strength itself. A latent factor that large is itself a reason to doubt the
+single-latent-trait story.
+
+## Machine learning does not beat the physics
+
+Predicting the champion from regular-season features, trained on 1980–2008 and tested on
+2009–2023:
+
+| Model | Held-out log-loss | AUC |
 | --- | --- | --- |
-| Upsets percentage vs dominance | 0.263 | 0.0024 |
-| Closeness of winning percentage vs dominance | 0.323 | 0.00016 |
+| **Random-walk simulation** | **0.1713** | 0.890 |
+| Random forest | 0.1717 | 0.893 |
+| Logistic regression | 0.1767 | 0.869 |
+| Gradient boosting | 0.1990 | 0.865 |
+| Uniform over the playoff field | 0.2383 | 0.500 |
 
-In baseball, seasons with *more* upsets and *closer* winning percentages are the seasons
-with *more* concentrated historical success — the hypothesis holding in the one sport
-with the longest continuous record. In soccer the same comparison points the other way.
-That disagreement is the finding: "competitive balance" is not one quantity, and which
-way it moves against dominance depends on the sport and the measure together.
+The generative simulation, with no learned parameters, matches or beats every learned
+model, and adding it as a feature to a logistic regression does not help — it already
+contains what the other features carry. Permutation importance puts conference seed
+first; prior titles contribute ~0 and career win percentage is *negative*. Franchise
+history adds nothing once current quality is known, and a history-only model reaches AUC
+0.540 out of sample. **You cannot predict which franchises will beat the random walk
+from their history.**
 
-## The simulator
+## A cross-sport atlas
 
-Team skill is drawn from a normal distribution; a match resolves as
+Field sizes range from 6 to 143, so each sport is scored against its own null: draw a
+champion uniformly from the field that actually competed that year, 20,000 times,
+preserving the real sequence of field sizes. The dominance multiple is real
+concentration ÷ null concentration.
 
-```
-P(Team 1 wins) = c^s1 / (c^s1 + c^s2)
-```
+| Sport | Editions | Median field | Unique champions | Dominance multiple |
+| --- | --- | --- | --- | --- |
+| Tour de France | 44 | 143 | 23 | **3.14×** |
+| NCAA football | 54 | 120 | 20 | 2.89× |
+| NBA | 43 | 29 | 14 | 2.23× |
+| Women's World Cup | 9 | 16 | 5 | 2.09× |
+| Tennis majors | 292 | 6 | 83 | 1.79× |
+| Masters golf | 54 | 50 | 37 | 1.71× |
+| Cricket World Cup | 12 | 11 | 5 | 1.70× |
 
-with a tie-capable variant for hockey and soccer that adds a draw parameter `b`:
+Every sport is significantly more concentrated than chance among its own entrants.
+Individual endurance sport is the most dominated; short-format team tournaments the
+least.
 
-```
-P(Team 1 wins) = b·c^s1 / (b·c^s1 + c^s2)
-P(Tie)         = 1 − P(Team 1 wins) − P(Team 2 wins)
-```
+## Auditing the first version of this work
 
-Fitting `c` and the per-season skill spread `s` against real NBA seasons from 1981–1982
-to 2022–2023 gives mean squared errors between roughly 2.5 and 12 on team win totals,
-with `c` stable at 0.908 across the whole period.
+The analysis was rebuilt from the raw data rather than extended, because re-running the
+original scripts turned up three defects worth publishing:
 
-The validation that matters is whether the fitted spread predicts real balance:
+- **Row-order misalignment.** The NFL script built dominance from `df['Year'].unique()` — file order, descending — and balance from `groupby('Year')`, ascending, then sliced both positionally. Every season's balance was paired with a different season's dominance. Fixing it flips the slope from +23.3 (p = 0.022) to −9.8 (p = 0.33).
+- **A spurious trend.** NCAA football dominance was defined as a cumulative count, so it is 85% explained by year alone and correlates with anything else that trends. R² against rating spread falls from 0.49 to 0.014 (p = 0.39) once both series are detrended.
+- **In-sample reporting.** Every R² in the original deck was in-sample. Under forward-chaining cross-validation, no model — linear or ensemble — reaches positive out-of-sample R² at the season level.
 
-| League | Simulated spread vs real spread | R² | p |
-| --- | --- | --- | --- |
-| NBA | SD of winning percentage | 0.613 | 5.5e-10 |
-| NHL | SD of point percentage | 0.403 | 6.3e-06 |
+The original exploratory scripts are left untouched in the repository as the historical
+record, with an appendix explaining which of their measures were safe to reuse and why.
 
-A single fitted parameter explaining 61% of the variance in four decades of real NBA
-standings spread is the strongest evidence here that the simulator is modelling the
-league rather than fitting noise.
+## What would settle it
 
-## Data collected
-
-Formula One, college football, the NFL, the NHL, NCAA Men's March Madness, MLB, and the
-five major European soccer leagues (Premier League, Bundesliga, Serie A, Ligue 1, La
-Liga), plus the Masters, tennis Grand Slams, the Tour de France, cricket, rugby, and both
-World Cups as smaller cross-checks.
+Actual playoff series results, so the model can be tested where it matters rather than
+calibrated to one outcome per year; roster continuity, the leading candidate mechanism
+and one the standings cannot see; and more leagues with verified champions, since the
+concentration test needs long records to have power.

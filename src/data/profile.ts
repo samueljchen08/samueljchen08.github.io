@@ -178,10 +178,11 @@ export const roles: Role[] = [
     track: 'engineering',
     mark: 'MIT',
     logo: '/logos/mit-sloan.jpg',
-    href: 'https://drive.google.com/file/d/1jBHDCSsCCxZy0hC6gAn1ts2TY_jLJpeu/view?usp=sharing',
+    // The deep dive itself, not the slide deck — the same report the project card opens.
+    href: 'https://samueljchen08.github.io/DurableDominance/reports/durable_dominance_report.html',
     bullets: [
-      'Coded five Monte Carlo season simulators in Python measuring dominance and competitive balance across major team sports.',
-      'Analyzed 15+ sports to test how durable dominance relates to competitiveness.',
+      'Fit a Bradley-Terry strength model to 43 seasons of NBA head-to-head results and sampled 20,000 alternate league histories to test how concentrated championships should be.',
+      'Found titles about twice as concentrated as team quality explains, then scored seven sports against their own field sizes on one scale.',
     ],
   },
 ];

@@ -7,24 +7,27 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, question, stack, repo, live, paper } = project.data;
+const { title, question, stack, links } = project.data;
 
 /**
+ * `read` first, then the project's own off-site links in the order it declares them.
  * The arrow is a separator, not a suffix: `read → repo → paper`, with nothing trailing
  * the last link.
  *
- * One link is "stretched" — its ::after covers the whole card, so clicking anywhere
- * that is not another link follows it. That is the paper where a project has one, and
- * the repository otherwise. The stretched link must stay statically positioned for its
- * ::after to resolve against the card rather than against itself.
+ * The link marked `primary` is "stretched" — its ::after covers the whole card, so
+ * clicking anywhere that is not another link follows it. The stretched link must stay
+ * statically positioned for its ::after to resolve against the card rather than against
+ * itself.
  */
-const primary = paper ?? repo;
-const links = [
-  { href: `/projects/${project.id}/`, label: 'read', external: false },
-  ...(repo ? [{ href: repo, label: 'repo', external: true }] : []),
-  ...(live ? [{ href: live, label: 'live report', external: true }] : []),
-  ...(paper ? [{ href: paper, label: 'paper', external: true }] : []),
-].map((link) => ({ ...link, stretched: link.href === primary }));
+const row = [
+  { href: `/projects/${project.id}/`, label: 'read', external: false, stretched: false },
+  ...links.map((link) => ({
+    href: link.href,
+    label: link.label,
+    external: true,
+    stretched: link.primary === true,
+  })),
+];
 ---
 
 <article class="card">
@@ -32,14 +35,14 @@ const links = [
   <p class="question">{question}</p>
   <Tags items={stack} />
   <ul class="links">
-    {links.map((link, i) => (
+    {row.map((link, i) => (
       <li>
         <a
           class={link.stretched ? 'stretched' : undefined}
           href={link.href}
           {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         >{link.label}</a>
-        {i < links.length - 1 && <span class="sep" aria-hidden="true">→</span>}
+        {i < row.length - 1 && <span class="sep" aria-hidden="true">→</span>}
       </li>
     ))}
   </ul>
@@ -60,7 +63,7 @@ const links = [
       box-shadow var(--dur) ease;
   }
 
-  /* The card lights up as one object — the whole surface is the repo link. */
+  /* The card lights up as one object — the whole surface is the primary link. */
   .card:hover,
   .card:focus-within {
     border-color: var(--accent);

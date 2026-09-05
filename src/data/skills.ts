@@ -17,13 +17,21 @@ export interface SkillGroup {
  */
 const SECTORS: Record<string, string[]> = {
   Languages: ['Python', 'JavaScript', 'HTML', 'CSS'],
-  'Machine Learning': ['PyTorch', 'XGBoost', 'OpenCV', 'Reinforcement learning', 'GRPO', 'LLM APIs'],
+  'Machine Learning': [
+    'PyTorch',
+    'XGBoost',
+    'scikit-learn',
+    'OpenCV',
+    'Reinforcement learning',
+    'GRPO',
+    'LLM APIs',
+  ],
   'Statistics & Experiment Design': [
     'Bayesian inference',
     'Causal inference',
     'Regression analysis',
     'Monte Carlo simulation',
-    'Parameter fitting',
+    'Maximum likelihood estimation',
   ],
   'Data & Tooling': ['SQLite', 'Synthetic data', 'pytest'],
 };

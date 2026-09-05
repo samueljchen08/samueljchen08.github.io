@@ -73,6 +73,28 @@ test('multi-object-tracking page builds with the Kalman result', () => {
   assert.ok(page.includes('https://drive.google.com/file/d/14I8We1yRNw1d1kzCVHLzmc5P-jsfh__H/view'));
 });
 
+test('durable-dominance page builds with its three links and the concentration result', () => {
+  const page = html('projects/durable-dominance/index.html');
+  assert.ok(page.includes('1.6×'), 'the concentration multiple is in the result strip');
+  assert.ok(page.includes('Fourteen franchises won the last 43 NBA titles'), 'the claim is stated');
+  assert.ok(page.includes('https://github.com/samueljchen08/DurableDominance'), 'repo link');
+  for (const label of ['durable dominance', 'cross-sport atlas']) {
+    assert.ok(page.includes(`>${label}</a>`), `${label} link is labelled`);
+  }
+  assert.doesNotMatch(page, /1jBHDCSsCCxZy0hC6gAn1ts2TY_jLJpeu/, 'the drive deck link is gone');
+});
+
+test('homepage: the durable-dominance card stretches to the deep dive, not the repo', () => {
+  const page = html('index.html');
+  const deepDive = 'https://samueljchen08.github.io/DurableDominance/reports/durable_dominance_report.html';
+  assert.ok(
+    page.includes(`<a class="stretched" href="${deepDive}"`),
+    'clicking the card body opens the deep dive',
+  );
+  // The same report backs the Sloan role, so the two cannot drift apart.
+  assert.ok(page.split(deepDive).length - 1 >= 2, 'the Sloan card links to the same report');
+});
+
 test('homepage: hero has meta line and three actions, no tagline', () => {
   const page = html('index.html');
   assert.ok(page.includes("MIT CS-AI '27 · Cambridge, MA / Bellevue, WA"));
@@ -86,9 +108,10 @@ test('homepage: hero has meta line and three actions, no tagline', () => {
 test('homepage: projects carousel, in order and without the stat column', () => {
   const page = html('index.html');
   const i1 = page.indexOf('href="/projects/multi-object-tracking/"');
-  const i2 = page.indexOf('href="/projects/opsgym/"');
-  const i3 = page.indexOf('href="/projects/agentic-commerce-lab/"');
-  assert.ok(i1 > -1 && i2 > i1 && i3 > i2, 'tracking, then opsgym, then the lab');
+  const i2 = page.indexOf('href="/projects/durable-dominance/"');
+  const i3 = page.indexOf('href="/projects/opsgym/"');
+  const i4 = page.indexOf('href="/projects/agentic-commerce-lab/"');
+  assert.ok(i1 > -1 && i2 > i1 && i3 > i2 && i4 > i3, 'tracking, dominance, opsgym, then the lab');
   for (const fig of ['22.5 pts', '−$188,718', '0.219 ft']) {
     assert.ok(!page.includes(fig), `${fig} belongs to the project page, not the card`);
   }
@@ -123,7 +146,10 @@ test('project page: result strip, limits callout, toc, prev/next', () => {
   assert.doesNotMatch(page, /pager[^>]*>[\s\S]*?multi-object-tracking/, 'no next link on the last project');
   // The first project has a next and no previous.
   const first = html('projects/multi-object-tracking/index.html');
-  assert.ok(first.includes('href="/projects/opsgym/"'), 'tracking pages forward to opsgym');
+  assert.ok(
+    first.includes('href="/projects/durable-dominance/"'),
+    'tracking pages forward to durable dominance',
+  );
 });
 
 test('resume page renders every role and the PDF button', () => {

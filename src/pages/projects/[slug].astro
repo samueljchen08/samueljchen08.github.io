@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 
 const { project, prev, next } = Astro.props;
 const { Content, headings } = await render(project);
-const { title, question, period, repo, live, paper, stack, results, limits } = project.data;
+const { title, question, period, links, stack, results, limits } = project.data;
 ---
 
 <Base title={`${title} — Samuel Chen`} description={question}>
@@ -28,19 +28,12 @@ const { title, question, period, repo, live, paper, stack, results, limits } = p
         <span class="mono period">{period}</span>
         <Tags items={stack} />
         <ul class="links mono">
-          {repo && <li><a href={repo} target="_blank" rel="noopener noreferrer">repo</a></li>}
-          {live && (
+          {links.map((link, i) => (
             <li>
-              {repo && <span class="sep" aria-hidden="true">→</span>}
-              <a href={live} target="_blank" rel="noopener noreferrer">live report</a>
+              {i > 0 && <span class="sep" aria-hidden="true">→</span>}
+              <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
             </li>
-          )}
-          {paper && (
-            <li>
-              {repo && <span class="sep" aria-hidden="true">→</span>}
-              <a href={paper} target="_blank" rel="noopener noreferrer">paper</a>
-            </li>
-          )}
+          ))}
         </ul>
       </div>
       <ResultStrip results={results} />
@@ -69,7 +62,7 @@ const { title, question, period, repo, live, paper, stack, results, limits } = p
   .question { color: var(--fg-muted); font-size: 1.15rem; margin: var(--space-2) 0 var(--space-3); }
   .meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
   .period { color: var(--fg-muted); }
-  .links { list-style: none; padding: 0; margin: 0; display: flex; gap: var(--space-2); max-width: none; }
+  .links { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); max-width: none; }
   .links li { margin: 0; display: inline-flex; align-items: center; gap: var(--space-2); }
   .sep { color: var(--fg-muted); }
   .layout { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: var(--space-5); align-items: start; }
